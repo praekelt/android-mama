@@ -25,7 +25,7 @@ buildscript{
         annotationApiVersion = "1.2"
         rxAndroidVersion = "0.24.0"
         jgitVersion = "4.0.0.201506090130-r"
-        ankoVersion = "0.6.2-15"
+        ankoVersion = "0.6.2-15s"
     }
     repositories {
         mavenCentral()
