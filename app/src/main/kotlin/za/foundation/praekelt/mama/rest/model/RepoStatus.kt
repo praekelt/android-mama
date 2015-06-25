@@ -8,10 +8,9 @@ import java.util.*
  * Repository model class
  */
 
-data class Repo(var commit:String = "", var author:String = "",
+data class RepoStatus(var commit:String = "", var author:String = "",
                 var name:String = "", var timestamp: Calendar = GregorianCalendar()){
     companion object{
-        val FIELD_AUTHOR:String = "author"
         val FIELD_COMMIT:String = "commit"
         val FIELD_NAME:String = "name"
         val FIELD_TIMESTAMP:String = "timestamp"
