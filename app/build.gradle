@@ -1,14 +1,13 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'aar-link-sources'
 apply plugin: 'com.neenbedankt.android-apt'
 
 buildscript{
     ext{
         kotlin_version = '0.12.412'
         androidAptVersion = "1.4"
-        dbFlowVersion = "1.+"
+        dbFlowVersion = "2.1.0"
         gsonVersion = "2.3"
         supportLibVersion = "22.2.0"
         picassoVersion = "2.5.2"
@@ -24,6 +23,8 @@ buildscript{
     }
     repositories {
         mavenCentral()
+        maven { url "https://raw.github.com/Raizlabs/maven-releases/master/releases" }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -73,17 +74,14 @@ dependencies {
     compile "com.squareup.okhttp:okhttp:$okHttpVersion"
     compile "com.squareup.okhttp:okhttp-urlconnection:$okHttpVersion"
     compile "com.squareup.retrofit:retrofit:$retrofitVersion"
-    apt "com.google.dagger:dagger-compiler:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     compile "com.google.dagger:dagger:$daggerVersion"
     provided "javax.annotation:javax.annotation-api:$annotationApiVersion"
     compile "io.reactivex:rxandroid:$rxAndroidVersion"
     compile "io.reactivex:rxandroid-framework:$rxAndroidVersion"
-    apt 'com.raizlabs.android:DBFlow-Compiler:1.2.0'
-    aarLinkSources 'com.raizlabs.android:DBFlow-Compiler:1.2.0:sources@jar'
-    compile 'com.raizlabs.android:DBFlow-Core:1.2.0'
-    aarLinkSources 'com.raizlabs.android:DBFlow-Core:1.2.0:sources@jar'
-    compile 'com.raizlabs.android:DBFlow:1.2.0'
-    aarLinkSources 'com.raizlabs.android:DBFlow:1.2.0:sources@jar'
+    kapt "com.raizlabs.android:DBFlow-Compiler:$dbFlowVersion"
+    compile "com.raizlabs.android:DBFlow-Core:$dbFlowVersion"
+    compile "com.raizlabs.android:DBFlow:$dbFlowVersion"
     compile "org.jetbrains.anko:anko:$ankoVersion"
 }
 repositories {
