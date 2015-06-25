@@ -15,8 +15,8 @@ import retrofit.RestAdapter
 import retrofit.converter.GsonConverter
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
-import za.foundation.praekelt.mama.rest.adapter.RepoAdapter
-import za.foundation.praekelt.mama.rest.model.Repo
+import za.foundation.praekelt.mama.rest.adapter.RepoStatusAdapter
+import za.foundation.praekelt.mama.rest.model.RepoStatus
 import za.foundation.praekelt.mama.rest.service.UCDService
 import za.foundation.praekelt.mama.util.Constants
 import java.util.concurrent.TimeUnit
@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment : Fragment(), AnkoLogger {
-    var isConnected:Boolean = true;
+    var isConnected:Boolean = false;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super<Fragment>.onCreate(savedInstanceState)
@@ -69,7 +69,7 @@ public class MainActivityFragment : Fragment(), AnkoLogger {
             return isConnected
         }
 
-        val gson:Gson = GsonBuilder().registerTypeAdapter(javaClass<Repo>(), RepoAdapter()).create()
+        val gson:Gson = GsonBuilder().registerTypeAdapter(javaClass<RepoStatus>(), RepoStatusAdapter()).create()
 
         val restAdapter:RestAdapter = RestAdapter.Builder()
                             .setEndpoint(Constants.BASE_URL)
@@ -80,7 +80,7 @@ public class MainActivityFragment : Fragment(), AnkoLogger {
         val ucdService:UCDService = restAdapter.create(javaClass<UCDService>())
 
         info("getting repo status")
-        ucdService.getRepoStatus()
+        ucdService.cloneRepo()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({println(it)}, {it.printStackTrace()})
