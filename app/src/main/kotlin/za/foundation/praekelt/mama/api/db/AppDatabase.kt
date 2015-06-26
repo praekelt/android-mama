@@ -1,4 +1,4 @@
-package za.foundation.praekelt.mama.db
+package za.foundation.praekelt.mama.api.db
 
 import com.raizlabs.android.dbflow.annotation.Database
 import za.foundation.praekelt.mama.util.Constants as _C
