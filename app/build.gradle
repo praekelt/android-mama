@@ -1,41 +1,30 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'aar-link-sources'
 apply plugin: 'com.neenbedankt.android-apt'
 
 buildscript{
     ext{
-        kotlin_version = '0.12.412'
+        kotlin_version = '0.1-SNAPSHOT'
         androidAptVersion = "1.4"
-        dbFlowVersion = "1.+"
-        googleApiAndroidClientVersion = "1.19.0"
-        playServicesVersion = "7.5.0"
+        dbFlowVersion = "2.1.0"
         gsonVersion = "2.3"
         supportLibVersion = "22.2.0"
         picassoVersion = "2.5.2"
         ottoVersion = "1.3.6"
-        butterknifeVersion = "6.1.0"
-        okioVersion = "1.3.0"
-        okHttpVersion = "2.3.0"
-        retrofitVersion = "1.7.1"
+        okioVersion = "1.4.0"
+        okHttpVersion = "2.4.0"
+        retrofitVersion = "1.9.0"
         droidIconVersion = "0.1.4@aar"
         daggerVersion = "2.0"
-        fabVersion = "1.2.1"
-        circularImageViewVersion = "1.1"
-        observableScrollViewVersion = "1.3.0"
         annotationApiVersion = "1.2"
         rxAndroidVersion = "0.24.0"
-        jsoupVersion = "1.8.2"
+        ankoVersion = "0.6.2-15s"
     }
     repositories {
         mavenCentral()
     }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
 }
-
 
 android {
     compileSdkVersion 21
@@ -74,28 +63,26 @@ dependencies {
     compile "com.android.support:recyclerview-v7:$supportLibVersion"
     compile "com.squareup.picasso:picasso:$picassoVersion"
     compile "com.squareup:otto:$ottoVersion"
-    compile "com.jakewharton:butterknife:$butterknifeVersion"
     compile "com.squareup.okio:okio:$okioVersion"
     compile "com.squareup.okhttp:okhttp:$okHttpVersion"
     compile "com.squareup.okhttp:okhttp-urlconnection:$okHttpVersion"
     compile "com.squareup.retrofit:retrofit:$retrofitVersion"
-    apt "com.google.dagger:dagger-compiler:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     compile "com.google.dagger:dagger:$daggerVersion"
     provided "javax.annotation:javax.annotation-api:$annotationApiVersion"
-
     compile "io.reactivex:rxandroid:$rxAndroidVersion"
     compile "io.reactivex:rxandroid-framework:$rxAndroidVersion"
-
-    apt 'com.raizlabs.android:DBFlow-Compiler:1.2.0'
-    aarLinkSources 'com.raizlabs.android:DBFlow-Compiler:1.2.0:sources@jar'
-    compile 'com.raizlabs.android:DBFlow-Core:1.2.0'
-    aarLinkSources 'com.raizlabs.android:DBFlow-Core:1.2.0:sources@jar'
-    compile 'com.raizlabs.android:DBFlow:1.2.0'
-    aarLinkSources 'com.raizlabs.android:DBFlow:1.2.0:sources@jar'
-
-    compile 'org.eclipse.jgit:org.eclipse.jgit:4.0.0.201506090130-r'
-
+    kapt "com.raizlabs.android:DBFlow-Compiler:$dbFlowVersion"
+    compile "com.raizlabs.android:DBFlow-Core:$dbFlowVersion"
+    compile "com.raizlabs.android:DBFlow:$dbFlowVersion"
+    compile "org.jetbrains.anko:anko:$ankoVersion"
 }
 repositories {
     mavenCentral()
+    maven { url "https://raw.github.com/Raizlabs/maven-releases/master/releases" }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+}
+
+kapt{
+    generateStubs = true
 }
