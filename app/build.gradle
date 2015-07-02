@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'com.neenbedankt.android-apt'
 
 buildscript{
     ext{
@@ -20,6 +19,11 @@ buildscript{
         annotationApiVersion = "1.2"
         rxAndroidVersion = "0.24.0"
         ankoVersion = "0.6.2-15s"
+
+        //test dependency versions
+        assertjAndroidVersion = "1.0.0"
+        junitVersion = "4.12"
+        robolectricVersion = "3.0-rc3"
     }
     repositories {
         mavenCentral()
@@ -36,6 +40,7 @@ android {
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -51,6 +56,7 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
     }
 }
 
@@ -76,6 +82,17 @@ dependencies {
     compile "com.raizlabs.android:DBFlow-Core:$dbFlowVersion"
     compile "com.raizlabs.android:DBFlow:$dbFlowVersion"
     compile "org.jetbrains.anko:anko:$ankoVersion"
+
+    //testing dependencies
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    testCompile("com.squareup.assertj:assertj-android:$assertjAndroidVersion"){
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    testCompile("org.robolectric:robolectric:$robolectricVersion") {
+        exclude group: 'commons-logging', module: 'commons-logging'
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
 }
 repositories {
     mavenCentral()
