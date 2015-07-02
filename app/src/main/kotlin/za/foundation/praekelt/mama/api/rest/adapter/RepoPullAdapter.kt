@@ -10,7 +10,7 @@ import za.foundation.praekelt.mama.api.rest.model.RepoPull
  * JSON Adapter for the RepoPull class
  */
 class RepoPullAdapter: TypeAdapter<RepoPull>(){
-    override fun read(input: JsonReader?): RepoPull? {
+    override fun read(input: JsonReader?): RepoPull {
         if(input == null)
             throw IllegalArgumentException("input is null")
 

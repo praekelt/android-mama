@@ -11,7 +11,7 @@ import za.foundation.praekelt.mama.api.rest.model.RepoDiff
  */
 
 class RepoDiffAdapter: TypeAdapter<RepoDiff>() {
-    override fun read(input: JsonReader?): RepoDiff? {
+    override fun read(input: JsonReader?): RepoDiff {
         if(input == null)
             throw IllegalArgumentException("Input is null!")
 
