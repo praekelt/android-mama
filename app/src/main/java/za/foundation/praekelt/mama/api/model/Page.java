@@ -43,13 +43,16 @@ public class Page extends BaseModel{
     @Column int position;
     @Column @Nullable String image;
     @Column @NotNull String imageHost;
+    @Column @NotNull String localeId;
+    @Column @Nullable String sourceId;
+    @Column @Nullable String primaryCategoryId;
     @Column @NotNull DBStringList authorTags;
     @Column @NotNull DBStringList linkedPagesIDs;
     @NotNull List<Page> linkedPages;
 
     @NotNull
     @ForeignKey(
-            references = {@ForeignKeyReference(columnName = "languageLocale",
+            references = {@ForeignKeyReference(columnName = "localeId",
                     columnType = String.class,
                     foreignColumnName = "locale")},
             saveForeignKeyModel = false)
@@ -65,7 +68,7 @@ public class Page extends BaseModel{
 
     @NotNull
     @ForeignKey(
-            references = {@ForeignKeyReference(columnName = "source",
+            references = {@ForeignKeyReference(columnName = "categorySourceId",
                     columnType = String.class,
                     foreignColumnName = "uuid")},
             saveForeignKeyModel = false)
@@ -76,7 +79,7 @@ public class Page extends BaseModel{
         createdAt = new GregorianCalendar(); modifiedAt = new GregorianCalendar();
         authorTags = new DBStringList(); linkedPagesIDs = new DBStringList(2);
         linkedPages = new ArrayList<>(); language = new Localisation();
-        primaryCategory = new Category();
+        primaryCategory = new Category(); localeId = ""; sourceId = ""; primaryCategoryId = "";
     }
 
     @NotNull
@@ -255,6 +258,33 @@ public class Page extends BaseModel{
         this.primaryCategory = primaryCategory;
     }
 
+    @NotNull
+    public String getLocaleId() {
+        return localeId;
+    }
+
+    public void setLocaleId(@NotNull String localeId) {
+        this.localeId = localeId;
+    }
+
+    @Nullable
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(@Nullable String sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    @Nullable
+    public String getPrimaryCategoryId() {
+        return primaryCategoryId;
+    }
+
+    public void setPrimaryCategoryId(@Nullable String primaryCategoryId) {
+        this.primaryCategoryId = primaryCategoryId;
+    }
+
     //Static references for json field names
     public static final String FIELD_UUID = "uuid";
     public static final String FIELD_TITLE = "title";
@@ -270,6 +300,9 @@ public class Page extends BaseModel{
     public static final String FIELD_POSITION = "position";
     public static final String FIELD_IMAGE = "image";
     public static final String FIELD_IMAGE_HOST = "image_host";
+    public static final String FIELD_LOCALE_ID = "language";
+    public static final String FIELD_SOURCE_ID = "source";
+    public static final String FIELD_PRIME_CAT_ID = "primary_category";
     public static final String FIELD_AUTHOR_TAGS = "author_tags";
     public static final String FIELD_LINKED_PAGES = "linked_pages";
 }

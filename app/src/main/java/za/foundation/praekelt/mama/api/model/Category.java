@@ -31,16 +31,18 @@ public class Category extends BaseModel {
     @Column @NotNull String slug;
     @Column @Nullable String image;
     @Column @NotNull String imageHost;
+    @Column @Nullable String sourceId;
+    @Column @NotNull String localeId;
 
     @NotNull
     @ForeignKey(
-            references = {@ForeignKeyReference(columnName = "languageLocale",
+            references = {@ForeignKeyReference(columnName = "localeId",
                     columnType = String.class,
                     foreignColumnName = "locale")},
             saveForeignKeyModel = false)
     Localisation language;
 
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     @ForeignKey(
             references = {@ForeignKeyReference(columnName = "sourceId",
                     columnType = String.class,
@@ -50,7 +52,7 @@ public class Category extends BaseModel {
 
     public Category() {
         uuid = ""; title = ""; subtitle = ""; slug = ""; imageHost = "";
-        language = new Localisation(); source = new Category();
+        language = new Localisation(); position = -1; localeId = "";
     }
 
     @NotNull
@@ -141,6 +143,24 @@ public class Category extends BaseModel {
         this.source = source;
     }
 
+    @Nullable
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(@Nullable String sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    @NotNull
+    public String getLocaleId() {
+        return localeId;
+    }
+
+    public void setLocaleId(@NotNull String localeId) {
+        this.localeId = localeId;
+    }
+
     //Static references for json field names
     public static final String FIELD_UUID = "uuid";
     public static final String FIELD_TITLE = "title";
@@ -150,4 +170,6 @@ public class Category extends BaseModel {
     public static final String FIELD_POSITION = "position";
     public static final String FIELD_IMAGE = "image";
     public static final String FIELD_IMAGE_HOST = "image_host";
+    public static final String FIELD_SOURCE_ID = "source";
+    public static final String FIELD_LOCALE_ID = "language";
 }
