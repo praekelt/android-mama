@@ -33,7 +33,7 @@ class RepoAdapter: TypeAdapter<Repo>() {
                 Repo.FIELD_LOCALISATION -> repo.locales = processLocales(input)
                 Repo.FIELD_CATEGORY -> repo.categories = processCategories(input)
                 else -> {
-                    Log.d("RepoAdapter", "read found unknown tag => ${input.nextName()}")
+                    Log.d("RepoAdapter", "read found unknown tag")
                     input.skipValue()
                 }
             }

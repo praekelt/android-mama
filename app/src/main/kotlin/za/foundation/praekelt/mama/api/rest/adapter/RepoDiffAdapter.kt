@@ -25,7 +25,7 @@ class RepoDiffAdapter: TypeAdapter<RepoDiff>() {
                 RepoDiff.FIELD_PREVIOUS_INDEX -> repoDiff.previousIndex = input.nextString()
                 RepoDiff.FIELD_DIFF -> repoDiff.diffs = processDiffs(input)
                 else -> {
-                    Log.d("RepoDiffAdapter", "read found unknown tag => ${input.nextName()}")
+                    Log.d("RepoDiffAdapter", "read found unknown tag")
                     input.skipValue()
                 }
             }

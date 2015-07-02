@@ -1,9 +1,9 @@
 package za.foundation.praekelt.mama.api.rest.adapter
 
+import android.util.Log
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import za.foundation.praekelt.mama.api.rest.model.FormattedDiff
 import za.foundation.praekelt.mama.api.rest.model.RepoPull
 
 /**
@@ -24,6 +24,10 @@ class RepoPullAdapter: TypeAdapter<RepoPull>(){
                 RepoPull.FIELD_LOCALISATION -> repoPull.locales = processLocales(input)
                 RepoPull.FIELD_PAGE -> repoPull.pages = processPages(input)
                 RepoPull.FIELD_OTHER -> repoPull.diffs = processDiffs(input)
+                else -> {
+                    Log.d("RepoPullAdapter", "read found unknown tag")
+                    input.skipValue()
+                }
             }
         }
         input.endObject()

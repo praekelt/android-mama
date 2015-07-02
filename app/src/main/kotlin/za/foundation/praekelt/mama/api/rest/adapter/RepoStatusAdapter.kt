@@ -24,7 +24,7 @@ class RepoStatusAdapter: TypeAdapter<RepoStatus>(){
                 RepoStatus.FIELD_NAME -> repoStatus.name = input.nextString()
                 RepoStatus.FIELD_TIMESTAMP -> repoStatus.timestamp = processDate(input.nextString())
                 else -> {
-                    Log.d("RepoStatusAdapter", "read found unknown tag => ${input.nextName()}")
+                    Log.d("RepoStatusAdapter", "read found unknown tag")
                     input.skipValue()
                 }
             }
