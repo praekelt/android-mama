@@ -50,7 +50,6 @@ fun processCategories(input: JsonReader): MutableList<Category> {
                 Category.FIELD_LOCALE_ID -> category.setLocaleId(input.nextString());
                 else -> {
                     Log.d("AdapterUtils", "procCat unknown tag found => $nextName")
-                    println("procCat unknown tag found => $nextName")
                     input.skipValue()
                 }
             }
@@ -91,7 +90,6 @@ fun processDiffs(input: JsonReader): List<FormattedDiff> {
                 }
                 else -> {
                     Log.d("AdapterUtils", "procDiffs found unknown tag => $nextName")
-                    println("procDiffs found unknown tag => $nextName")
                     input.skipValue()
                 }
             }
@@ -137,7 +135,6 @@ fun processLocales(input: JsonReader): List<Localisation> {
                 Localisation.FIELD_LOCALE -> locale.setLocale(input.nextString())
                 else -> {
                     Log.d("AdapterUtils", "procLocales found unknown tag => $nextName")
-                    println("procLocales found unknown tag => $nextName")
                     input.skipValue()
                 }
             }
@@ -179,7 +176,6 @@ fun processPages(input: JsonReader): List<Page> {
                 Page.FIELD_LINKED_PAGES -> page.setLinkedPagesIDs(processLinks(input))
                 else -> {
                     Log.d("AdapterUtils", "procPages found unknown tag => $nextName")
-                    println("procPages found unknown tag => $nextName")
                     input.skipValue()
                 }
             }
