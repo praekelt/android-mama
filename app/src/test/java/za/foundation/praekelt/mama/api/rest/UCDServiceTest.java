@@ -74,9 +74,9 @@ public class UCDServiceTest {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(repo -> {
                     assertThat(repo.getCommit()).isNotEqualTo("");
-                    assertThat(repo.getCategories().size()).isGreaterThan(0);
-                    assertThat(repo.getLocales().size()).isGreaterThan(0);
-                    assertThat(repo.getPages().size()).isGreaterThan(0);
+                    assertThat(repo.getCategories()).isNotEmpty();
+                    assertThat(repo.getLocales()).isNotEmpty();
+                    assertThat(repo.getPages()).isNotEmpty();
                 });
     }
 
@@ -89,7 +89,7 @@ public class UCDServiceTest {
                     assertThat(repoDiff.getName()).isEqualTo(Constants.REPO_NAME);
                     assertThat(repoDiff.getPreviousIndex()).isEqualTo(commitId);
                     assertThat(repoDiff.getCurrentIndex()).isEqualTo("");
-                    assertThat(repoDiff.getDiffs().size()).isGreaterThan(0);
+                    assertThat(repoDiff.getDiffs()).isNotEmpty();
                 });
     }
 
@@ -100,9 +100,9 @@ public class UCDServiceTest {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(repoPull -> {
                     assertThat(repoPull.getCommit()).isNotEqualTo("");
-                    assertThat(repoPull.getCategories().size()).isGreaterThan(0);
-                    assertThat(repoPull.getLocales().size()).isGreaterThan(0);
-                    assertThat(repoPull.getPages().size()).isGreaterThan(0);
+                    assertThat(repoPull.getCategories()).isNotEmpty();
+                    assertThat(repoPull.getLocales()).isNotEmpty();
+                    assertThat(repoPull.getPages()).isNotEmpty();
                 });
     }
 }
