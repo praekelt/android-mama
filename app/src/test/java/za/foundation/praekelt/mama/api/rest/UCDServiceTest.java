@@ -15,15 +15,13 @@ import org.robolectric.shadows.ShadowApplication;
 
 import retrofit.RestAdapter;
 import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import za.foundation.praekelt.mama.BuildConfig;
 import za.foundation.praekelt.mama.api.db.AppDatabase;
 import za.foundation.praekelt.mama.app.App;
 import za.foundation.praekelt.mama.util.Constants;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static za.foundation.praekelt.mama.api.rest.RestPackage.createUCDService;
+import static za.foundation.praekelt.mama.api.rest.RestPackage.createTestUCDService;
 import static za.foundation.praekelt.mama.api.rest.RestPackage.createUCDServiceGson;
 
 /**
@@ -37,13 +35,14 @@ public class UCDServiceTest {
     String commitId = "0ade8cf2f086ee955050ca4ddbfcb887454d683e";
     Context context;
 
+
     @Before
     public void setUp() {
         context = ShadowApplication.getInstance().getApplicationContext();
         FlowManager.init(context);
         FlowManager.getDatabase(AppDatabase.NAME).getWritableDatabase().acquireReference();
 
-        RestAdapter restAdapter = createUCDService(createUCDServiceGson());
+        RestAdapter restAdapter = createTestUCDService(createUCDServiceGson());
 
         ucdService = restAdapter.create(UCDService.class);
     }
@@ -70,8 +69,6 @@ public class UCDServiceTest {
     @Test
     public void testCloneRepo() {
         Observable.just(ucdService.cloneRepo().toBlocking().single())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(repo -> {
                     assertThat(repo.getCommit()).isNotEqualTo("");
                     assertThat(repo.getCategories()).isNotEmpty();
@@ -83,12 +80,10 @@ public class UCDServiceTest {
     @Test
     public void testDiffRepo() {
         Observable.just(ucdService.getRepoDiff(commitId).toBlocking().single())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(repoDiff -> {
                     assertThat(repoDiff.getName()).isEqualTo(Constants.REPO_NAME);
                     assertThat(repoDiff.getPreviousIndex()).isEqualTo(commitId);
-                    assertThat(repoDiff.getCurrentIndex()).isEqualTo("");
+                    assertThat(repoDiff.getCurrentIndex()).isNotEqualTo("");
                     assertThat(repoDiff.getDiffs()).isNotEmpty();
                 });
     }
@@ -96,8 +91,6 @@ public class UCDServiceTest {
     @Test
     public void testPullRepo() {
         Observable.just(ucdService.pullRepo(commitId).toBlocking().single())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(repoPull -> {
                     assertThat(repoPull.getCommit()).isNotEqualTo("");
                     assertThat(repoPull.getCategories()).isNotEmpty();
