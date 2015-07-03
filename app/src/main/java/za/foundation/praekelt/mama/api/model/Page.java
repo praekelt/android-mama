@@ -77,7 +77,7 @@ public class Page extends BaseModel{
     public Page() {
         uuid= ""; title = ""; description = ""; slug = ""; content = ""; imageHost = "";
         createdAt = new GregorianCalendar(); modifiedAt = new GregorianCalendar();
-        authorTags = new DBStringList(); linkedPagesIDs = new DBStringList(2);
+        authorTags = new DBStringList(); linkedPagesIDs = new DBStringList();
         linkedPages = new ArrayList<>(); language = new Localisation();
         primaryCategory = new Category(); localeId = ""; sourceId = ""; primaryCategoryId = "";
     }
