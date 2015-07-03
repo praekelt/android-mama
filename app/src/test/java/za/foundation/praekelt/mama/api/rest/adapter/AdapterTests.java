@@ -81,7 +81,7 @@ public class AdapterTests{
 
         assertThat(repoDiff.getName()).isEqualTo(Constants.REPO_NAME);
         assertThat(repoDiff.getPreviousIndex()).isEqualTo(commitId);
-        assertThat(repoDiff.getCurrentIndex()).isEqualTo("");
+        assertThat(repoDiff.getCurrentIndex()).isNotEqualTo("");
         assertThat(repoDiff.getDiffs().size()).isGreaterThan(0);
         checkDiffs(repoDiff.getDiffs());
     }
@@ -130,7 +130,7 @@ public class AdapterTests{
     public void checkDiffs(List<FormattedDiff> diffs){
         for (FormattedDiff diff : diffs) {
             assertThat(diff.getPath()).isNotEqualTo("");
-            assertThat(diff.getType()).isEqualTo(FormattedDiff.DiffType.NOT_SET);
+            assertThat(diff.getType()).isNotEqualTo(FormattedDiff.DiffType.NOT_SET);
         }
     }
 
