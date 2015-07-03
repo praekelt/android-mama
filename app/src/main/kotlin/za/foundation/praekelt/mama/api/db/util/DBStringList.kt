@@ -6,4 +6,4 @@ import java.util.*
  * Wrapper list class to handle type conversion for DB
  */
 
-class DBStringList(capacity: Int = 0) : ArrayList<String>(capacity)
+class DBStringList(list: List<String> = ArrayList<String>()) : ArrayList<String>(list)
