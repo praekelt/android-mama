@@ -22,9 +22,7 @@ import za.foundation.praekelt.mama.api.db.AppDatabase;
 import za.foundation.praekelt.mama.app.App;
 import za.foundation.praekelt.mama.util.Constants;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static za.foundation.praekelt.mama.api.rest.RestPackage.createUCDService;
 import static za.foundation.praekelt.mama.api.rest.RestPackage.createUCDServiceGson;
 
@@ -63,9 +61,9 @@ public class UCDServiceTest {
 
         Observable.just(ucdService.getRepoStatus().toBlocking().single())
                 .subscribe(status -> {
-                    assertEquals("repo name", Constants.REPO_NAME, status.getName());
-                    assertNotEquals("commit index", "", status.getCommit());
-                    assertTrue("timestamp", status.getTimestamp().getTimeInMillis() < currentTime);
+                    assertThat(status.getName()).isEqualTo(Constants.REPO_NAME);
+                    assertThat(status.getCommit()).isNotEqualTo("");
+                    assertThat(status.getTimestamp().getTimeInMillis()).isLessThan(currentTime);
                 });
     }
 
@@ -75,10 +73,10 @@ public class UCDServiceTest {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(repo -> {
-                    assertNotEquals("commit index", repo.getCommit(), "");
-                    assertTrue("categories length", repo.getCategories().size() > 0);
-                    assertTrue("locales length", repo.getLocales().size() > 0);
-                    assertTrue("pages length", repo.getPages().size() > 0);
+                    assertThat(repo.getCommit()).isNotEqualTo("");
+                    assertThat(repo.getCategories().size()).isGreaterThan(0);
+                    assertThat(repo.getLocales().size()).isGreaterThan(0);
+                    assertThat(repo.getPages().size()).isGreaterThan(0);
                 });
     }
 
@@ -88,10 +86,10 @@ public class UCDServiceTest {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(repoDiff -> {
-                    assertEquals("repo name", Constants.REPO_NAME, repoDiff.getName());
-                    assertEquals("request commit id", commitId, repoDiff.getPreviousIndex());
-                    assertNotEquals("response commit it", "", repoDiff.getCurrentIndex());
-                    assertTrue("diffs length", repoDiff.getDiffs().size() > 0);
+                    assertThat(repoDiff.getName()).isEqualTo(Constants.REPO_NAME);
+                    assertThat(repoDiff.getPreviousIndex()).isEqualTo(commitId);
+                    assertThat(repoDiff.getCurrentIndex()).isEqualTo("");
+                    assertThat(repoDiff.getDiffs().size()).isGreaterThan(0);
                 });
     }
 
@@ -101,10 +99,10 @@ public class UCDServiceTest {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(repoPull -> {
-                    assertNotEquals("commit id", "", repoPull.getCommit());
-                    assertTrue("categories length", repoPull.getCategories().size() > 0);
-                    assertTrue("locales length", repoPull.getLocales().size() > 0);
-                    assertTrue("pages length", repoPull.getPages().size() > 0);
+                    assertThat(repoPull.getCommit()).isNotEqualTo("");
+                    assertThat(repoPull.getCategories().size()).isGreaterThan(0);
+                    assertThat(repoPull.getLocales().size()).isGreaterThan(0);
+                    assertThat(repoPull.getPages().size()).isGreaterThan(0);
                 });
     }
 }
