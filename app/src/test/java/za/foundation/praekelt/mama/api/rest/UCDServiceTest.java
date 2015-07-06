@@ -13,7 +13,6 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 
-import retrofit.RestAdapter;
 import rx.Observable;
 import za.foundation.praekelt.mama.BuildConfig;
 import za.foundation.praekelt.mama.api.db.AppDatabase;
@@ -42,9 +41,7 @@ public class UCDServiceTest {
         FlowManager.init(context);
         FlowManager.getDatabase(AppDatabase.NAME).getWritableDatabase().acquireReference();
 
-        RestAdapter restAdapter = createTestUCDService(createUCDServiceGson());
-
-        ucdService = restAdapter.create(UCDService.class);
+        ucdService = createTestUCDService(createUCDServiceGson());
     }
 
     @After

@@ -35,19 +35,23 @@ fun createUCDServiceGson(): Gson{
             .create()
 }
 
-fun createUCDService(gson: Gson = createUCDServiceGson()): RestAdapter{
-    return RestAdapter.Builder()
+fun createUCDService(gson: Gson = createUCDServiceGson()): UCDService{
+    val restAdapter: RestAdapter = RestAdapter.Builder()
             .setEndpoint(_C.BASE_URL)
             .setConverter(GsonConverter(gson))
             .build()
+
+    return restAdapter.create(javaClass<UCDService>())
 }
 
-internal fun createTestUCDService(gson: Gson = createUCDServiceGson()): RestAdapter {
-    return RestAdapter.Builder()
+internal fun createTestUCDService(gson: Gson = createUCDServiceGson()): UCDService {
+    val restAdapter: RestAdapter = RestAdapter.Builder()
             .setEndpoint(_C.BASE_URL)
             .setConverter(GsonConverter(gson))
             .setClient(TestHttpClient())
             .build()
+
+    return restAdapter.create(javaClass<UCDService>())
 }
 
 class TestHttpClient: Client {

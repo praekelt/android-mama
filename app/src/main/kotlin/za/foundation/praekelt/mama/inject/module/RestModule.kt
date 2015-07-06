@@ -14,7 +14,7 @@ class RestModule(){
     Provides
     FragmentScope
     fun provideUCDService(): UCDService {
-        return createUCDService().create(javaClass<UCDService>())
+        return createUCDService()
     }
 }
 
