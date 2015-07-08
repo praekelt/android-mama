@@ -27,6 +27,11 @@ buildscript{
     }
     repositories {
         mavenCentral()
+        maven { url 'http://oss.sonatype.org/content/repositories/snapshots' }
+    }
+
+    dependencies{
+        classpath 'org.jetbrains.kotlin:kotlin-android-extensions:0.1-SNAPSHOT'
     }
 }
 
