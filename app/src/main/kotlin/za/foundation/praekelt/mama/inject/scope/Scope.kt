@@ -3,15 +3,16 @@ package za.foundation.praekelt.mama.inject.scope
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import javax.inject.Qualifier
+import javax.inject.Scope
 
 /**
  * Dagger scopes
  */
 
-Qualifier
+Scope
 Retention(RetentionPolicy.RUNTIME)
-annotation public class ApplicationScope
+annotation public class ActivityScope
 
-Qualifier
+Scope
 Retention(RetentionPolicy.RUNTIME)
 annotation public class FragmentScope
