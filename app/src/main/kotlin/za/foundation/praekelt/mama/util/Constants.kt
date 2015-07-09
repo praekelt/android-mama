@@ -21,4 +21,6 @@ public object Constants {
     val FQN_LOCALISATION = "unicore.content.models.Localisation"
     val FQN_CATEGORY = "unicore.content.models.Category"
     val FQN_PAGE = "unicore.content.models.Page"
+
+    val SHARED_PREFS_COMMIT = "commit"
 }
