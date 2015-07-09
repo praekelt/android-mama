@@ -89,11 +89,12 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
                 .doOnNext { saveLocales(it) }
                 .doOnNext { saveCategories(it) }
                 .doOnNext { savePages(it) }
-                .doOnNext { defaultSharedPreferences.edit().putString(_C.SHARED_PREFS_COMMIT, it.commit) }
+                .doOnNext {
+                    defaultSharedPreferences.edit()
+                            .putString(_C.SHARED_PREFS_COMMIT, it.commit).apply() }
                 .flatMap {
                     info("refreshing")
-                    return@flatMap (viewPager.getAdapter() as CategoryPageAdapter).refresh()
-                }
+                    return@flatMap (viewPager.getAdapter() as CategoryPageAdapter).refresh() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     getActivityComponent().inject(this)
