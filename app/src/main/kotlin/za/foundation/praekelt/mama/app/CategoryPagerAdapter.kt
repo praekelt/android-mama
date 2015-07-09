@@ -13,12 +13,13 @@ import za.foundation.praekelt.mama.api.model.Category
 import za.foundation.praekelt.mama.api.model.Category_Table
 import za.foundation.praekelt.mama.app.fragment.MainActivityFragment
 import java.util.ArrayList
+import org.jetbrains.anko.defaultSharedPreferences
 
 /**
  * Adapter for category fragment view pager
  * @see za.foundation.praekelt.mama.app.activity.MainActivity
  */
-class CategoryPageAdapter(val fm: FragmentManager): FragmentPagerAdapter(fm) {
+class CategoryPageAdapter(val fm: FragmentManager, val locale: String): FragmentPagerAdapter(fm) {
     init{
         refreshCategories().subscribe{}
     }
@@ -41,8 +42,8 @@ class CategoryPageAdapter(val fm: FragmentManager): FragmentPagerAdapter(fm) {
         return Observable.just(Select())
                 .map{select ->
                     select.from(javaClass<Category>())
-                        .where(Condition.column(Category_Table.FEATUREDINNAVBAR)
-                        .`is`(true)).queryList()}
+                        .where(Condition.column(Category_Table.FEATUREDINNAVBAR).`is`(true))
+                        .and(Condition.column(Category_Table.LOCALEID).`is`(locale)).queryList()}
                 .filter{list -> list != null}
                 .map{list ->
                     categories = list
@@ -52,7 +53,6 @@ class CategoryPageAdapter(val fm: FragmentManager): FragmentPagerAdapter(fm) {
     }
 
     fun refresh(): Observable<Boolean>{
-        Log.i("CPA", "refreshing")
         return refreshCategories()
     }
 }

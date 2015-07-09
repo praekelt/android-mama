@@ -8,10 +8,12 @@ import android.support.v4.view.ViewPager
 import android.util.Log
 import dagger.Module
 import dagger.Provides
+import org.jetbrains.anko.defaultSharedPreferences
 import za.foundation.praekelt.mama.app.CategoryPageAdapter
 import za.foundation.praekelt.mama.app.activity.MainActivity
 import za.foundation.praekelt.mama.inject.scope.ActivityScope
 import kotlin.properties.Delegates
+import za.foundation.praekelt.mama.util.Constants as _C
 
 /**
  * Dagger module for main activity
@@ -45,7 +47,9 @@ class MainActivityModule(val activity: MainActivity) {
     Provides
     ActivityScope
     fun provideCategoryPageAdapter(fm: FragmentManager): CategoryPageAdapter{
-        return CategoryPageAdapter(fm)
+        val locale:String = activity.defaultSharedPreferences
+                .getString(_C.SHARED_PREFS_LOCALE, _C.SHARED_PREFS_LOCALE_DEFAULT)
+        return CategoryPageAdapter(fm, locale)
     }
 
     Provides

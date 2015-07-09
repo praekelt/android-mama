@@ -23,4 +23,6 @@ public object Constants {
     val FQN_PAGE = "unicore.content.models.Page"
 
     val SHARED_PREFS_COMMIT = "commit"
+    val SHARED_PREFS_LOCALE = "locale"
+    val SHARED_PREFS_LOCALE_DEFAULT = "eng_GB"
 }
