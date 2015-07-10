@@ -8,4 +8,16 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="cv_title_appearence" parent="TextAppearance.AppCompat.Headline">
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="cv_subtitle_appearence" parent="TextAppearance.AppCompat.Subhead">
+        <item name="android:textColor">@color/colorSubtitle</item>
+    </style>
+
+    <style name="cv_desc_appearence" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
 </resources>
