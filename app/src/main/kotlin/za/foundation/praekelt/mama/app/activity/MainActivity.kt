@@ -10,9 +10,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-import com.raizlabs.android.dbflow.runtime.TransactionManager
-import com.raizlabs.android.dbflow.runtime.transaction.process.ProcessModelInfo
-import com.raizlabs.android.dbflow.runtime.transaction.process.SaveModelTransaction
 import kotlinx.android.synthetic.activity_main.drawer_layout
 import kotlinx.android.synthetic.activity_main.nav_view
 import kotlinx.android.synthetic.include_main_activity_view_pager.simple_toolbar
@@ -24,13 +21,14 @@ import org.jetbrains.anko.defaultSharedPreferences
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import za.foundation.praekelt.mama.R
+import za.foundation.praekelt.mama.api.db.util.DBTransaction
 import za.foundation.praekelt.mama.api.rest.UCDService
-import za.foundation.praekelt.mama.api.rest.model.Repo
 import za.foundation.praekelt.mama.app.CategoryPageAdapter
 import za.foundation.praekelt.mama.inject.component.DaggerMainActivityComponent
 import za.foundation.praekelt.mama.inject.component.MainActivityComponent
 import za.foundation.praekelt.mama.inject.module.MainActivityModule
 import za.foundation.praekelt.mama.inject.module.RestModule
+import za.foundation.praekelt.mama.util.SharedPrefsUtil
 import javax.inject.Inject
 import kotlin.properties.Delegates
 import za.foundation.praekelt.mama.util.Constants as _C
@@ -68,37 +66,44 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onResume() {
         super<AppCompatActivity>.onResume()
+        println("resuming")
         val networkObs: Observable<Boolean> = Observable
                 .just(connectivityManager.getActiveNetworkInfo())
                 .map { networkInfo -> networkInfo?.isConnected() ?: false }
 
         networkObs.filter { !it }
-                .subscribe {
-                    Snackbar.make(
-                            this.drawer_layout, getString(R.string.no_internet_connection),
-                            Snackbar.LENGTH_LONG).show()
-                }
+                .subscribe { noInternetSnackBar() }
 
         val hasRepoObs: Observable<Boolean> = networkObs.filter { it }
-                .map { defaultSharedPreferences.getString(_C.SHARED_PREFS_COMMIT, "") }
+                .map { SharedPrefsUtil.getCommitFromSharedPrefs(this) }
                 .map { it != "" }
 
         hasRepoObs.filter { !it }
                 .doOnNext { info("repo doesn't exist") }
+                .doOnNext { println("repo doesn't exist") }
                 .flatMap { ucdService.cloneRepo() }
-                .doOnNext { saveLocales(it) }
-                .doOnNext { saveCategories(it) }
-                .doOnNext { savePages(it) }
-                .doOnNext {
-                    defaultSharedPreferences.edit()
-                            .putString(_C.SHARED_PREFS_COMMIT, it.commit).apply() }
-                .flatMap {
-                    info("refreshing")
-                    return@flatMap (viewPager.getAdapter() as CategoryPageAdapter).refresh() }
+                .doOnNext { DBTransaction.saveRepo(it) }
+                .doOnNext { SharedPrefsUtil.saveCommitToSharedPrefs(this, it.commit) }
+                .doOnNext { println("SP saved") }
+                .flatMap { (viewPager.getAdapter() as CategoryPageAdapter).refresh() }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    getActivityComponent().inject(this)
+                .subscribe { actComponent.inject(this) }
+
+        hasRepoObs.filter { it }
+                .doOnNext { info("repo exists, checking for update") }
+                .flatMap { ucdService.getRepoStatus() }
+                .filter { SharedPrefsUtil.getCommitFromSharedPrefs(this) != it.commit }
+                .doOnNext { info("getting update") }
+                .flatMap {
+                    ucdService.pullRepo(SharedPrefsUtil.getCommitFromSharedPrefs(this))
                 }
+                .doOnNext { DBTransaction.saveRepoPull(it) }
+                .doOnNext { println("saved update data") }
+                .doOnNext { SharedPrefsUtil.saveCommitToSharedPrefs(this, it.commit) }
+                .flatMap { (viewPager.getAdapter() as CategoryPageAdapter).refresh() }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe{ actComponent.inject(this) }
+        println("end resuming")
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -128,24 +133,9 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
                 .build()
     }
 
-    fun saveLocales(repo: Repo): Boolean {
-        info("saving locales info")
-        TransactionManager.getInstance()
-                .addTransaction(SaveModelTransaction(ProcessModelInfo.withModels(repo.locales)))
-        return true
-    }
-
-    fun saveCategories(repo: Repo): Boolean {
-        info("saving categories info")
-        TransactionManager.getInstance()
-                .addTransaction(SaveModelTransaction(ProcessModelInfo.withModels(repo.categories)))
-        return true
-    }
-
-    fun savePages(repo: Repo): Boolean {
-        info("saving pages info")
-        TransactionManager.getInstance()
-                .addTransaction(SaveModelTransaction(ProcessModelInfo.withModels(repo.pages)))
-        return true
+    fun noInternetSnackBar() {
+        Snackbar.make(
+                this.drawer_layout, getString(R.string.no_internet_connection),
+                Snackbar.LENGTH_LONG).show()
     }
 }
