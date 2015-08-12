@@ -44,7 +44,6 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         @Inject set
     var tabLayout: TabLayout by Delegates.notNull()
         @Inject set
-    private val actComponent by lazy { getActivityComponent() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super<AppCompatActivity>.onCreate(savedInstanceState)
@@ -61,7 +60,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         navigationView = this.nav_view
         viewPager = this.viewpager
         tabLayout = this.tabs
-        actComponent.inject(this)
+        getActivityComponent().inject(this)
     }
 
     override fun onResume() {
@@ -85,9 +84,9 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
                 .doOnNext { DBTransaction.saveRepo(it) }
                 .doOnNext { SharedPrefsUtil.saveCommitToSharedPrefs(this, it.commit) }
                 .doOnNext { println("SP saved") }
-                .flatMap { (viewPager.getAdapter() as CategoryPageAdapter).refresh() }
+//                .flatMap { (viewPager.getAdapter() as CategoryPageAdapter).refresh() }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { actComponent.inject(this) }
+                .subscribe { getActivityComponent().inject(this) }
 
         hasRepoObs.filter { it }
                 .doOnNext { info("repo exists, checking for update") }
@@ -102,7 +101,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
                 .doOnNext { SharedPrefsUtil.saveCommitToSharedPrefs(this, it.commit) }
                 .flatMap { (viewPager.getAdapter() as CategoryPageAdapter).refresh() }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe{ actComponent.inject(this) }
+                .subscribe{ getActivityComponent().inject(this) }
         println("end resuming")
     }
 

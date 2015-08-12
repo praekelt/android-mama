@@ -16,7 +16,7 @@ public object Constants {
     val REMOTE_PULL_URL = "$REMOTE_REPOS_DIR/$REPO_NAME/pull/{$REST_COMMIT_STUB}$REMOTE_URL_EXT"
     val REMOTE_DIFF_URL = "$REMOTE_REPOS_DIR/$REPO_NAME/diff/{$REST_COMMIT_STUB}$REMOTE_URL_EXT"
 
-    val REMOTE_DATE_FORMAT: String = "yyyy-MM-dd HH:mm:ss"
+    val REMOTE_DATE_FORMAT: String = "yyyy-MM-dd"
 
     val FQN_LOCALISATION = "unicore.content.models.Localisation"
     val FQN_CATEGORY = "unicore.content.models.Category"
