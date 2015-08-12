@@ -24,7 +24,7 @@ class DBListConverter: TypeConverter<String, DBStringList>() {
         if(data == null)
             throw NullPointerException("data is null")
 
-        val stringList:DBStringList = DBStringList(data.split(";"))
+        val stringList:DBStringList = DBStringList(data.split(';'))
         return stringList
     }
 }
