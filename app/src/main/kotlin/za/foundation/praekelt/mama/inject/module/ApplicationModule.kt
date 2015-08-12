@@ -18,7 +18,6 @@ import za.foundation.praekelt.mama.api.rest.model.RepoDiff
 import za.foundation.praekelt.mama.api.rest.model.RepoPull
 import za.foundation.praekelt.mama.api.rest.model.RepoStatus
 import za.foundation.praekelt.mama.app.App
-import za.foundation.praekelt.mama.inject.scope.ApplicationScope
 import za.foundation.praekelt.mama.util.Constants
 import javax.inject.Singleton
 
@@ -29,7 +28,6 @@ Module
 class ApplicationModule(val app: App){
     Provides
     Singleton
-    ApplicationScope
     fun provideApplicationContext(): Context{
         return app
     }

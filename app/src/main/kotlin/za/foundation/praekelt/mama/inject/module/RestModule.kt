@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import za.foundation.praekelt.mama.api.rest.UCDService
 import za.foundation.praekelt.mama.api.rest.createUCDService
-import za.foundation.praekelt.mama.inject.scope.FragmentScope
+import za.foundation.praekelt.mama.inject.scope.ActivityScope
 
 /**
  * Dagger module for rest services
@@ -12,7 +12,7 @@ import za.foundation.praekelt.mama.inject.scope.FragmentScope
 Module
 class RestModule(){
     Provides
-    FragmentScope
+    ActivityScope
     fun provideUCDService(): UCDService {
         return createUCDService()
     }

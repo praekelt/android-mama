@@ -62,9 +62,8 @@ fun processCategories(input: JsonReader): MutableList<Category> {
 }
 
 fun processDate(dateString: String): Calendar {
-    Log.d("Utils", "processing date")
     var date: Calendar = GregorianCalendar()
-    date.setTime(SimpleDateFormat(Constants.REMOTE_DATE_FORMAT).parse(dateString.replace('T', ' ')))
+    date.setTime(SimpleDateFormat(Constants.REMOTE_DATE_FORMAT).parse(dateString.substring(0, dateString.indexOf('T'))))
     return date
 }
 
