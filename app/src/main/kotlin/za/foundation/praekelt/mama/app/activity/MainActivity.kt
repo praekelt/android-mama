@@ -84,7 +84,6 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
                 .doOnNext { DBTransaction.saveRepo(it) }
                 .doOnNext { SharedPrefsUtil.saveCommitToSharedPrefs(this, it.commit) }
                 .doOnNext { println("SP saved") }
-//                .flatMap { (viewPager.getAdapter() as CategoryPageAdapter).refresh() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { getActivityComponent().inject(this) }
 
@@ -99,7 +98,6 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
                 .doOnNext { DBTransaction.saveRepoPull(it) }
                 .doOnNext { println("saved update data") }
                 .doOnNext { SharedPrefsUtil.saveCommitToSharedPrefs(this, it.commit) }
-                .flatMap { (viewPager.getAdapter() as CategoryPageAdapter).refresh() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe{ getActivityComponent().inject(this) }
         println("end resuming")
