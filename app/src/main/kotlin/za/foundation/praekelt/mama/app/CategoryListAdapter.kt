@@ -27,7 +27,7 @@ class CategoryListAdapter(val categoryUuid: String, val locale: String,
                           var orderBy: OrderBy = OrderBy.POSITION):
         RecyclerView.Adapter<CategoryListAdapter.ViewHolder>() {
     var pages: MutableList<Page> = ArrayList<Page>()
-    
+
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CategoryListAdapter.ViewHolder? {
         val view: View? = LayoutInflater.from(parent?.getContext()).inflate(R.layout.category_list_item, parent, false)
         return ViewHolder(view)
@@ -74,9 +74,15 @@ class CategoryListAdapter(val categoryUuid: String, val locale: String,
     }
 
     inner class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView){
-        val tv_title = itemView!!.find<TextView>(R.id.tv_title_category_list_item)
-        val tv_subtitle = itemView!!.find<TextView>(R.id.tv_subtitle_category_list_item)
-        val tv_desc = itemView!!.find<TextView>(R.id.tv_desc_category_list_item)
+        val tv_title: TextView
+        val tv_subtitle: TextView
+        val tv_desc: TextView
+
+        init{
+            tv_title = itemView!!.find<TextView>(R.id.tv_title_category_list_item)
+            tv_subtitle = itemView.find<TextView>(R.id.tv_subtitle_category_list_item)
+            tv_desc = itemView.find<TextView>(R.id.tv_desc_category_list_item)
+        }
 
         fun resetView(): Boolean{
             tv_title.setVisibility(View.VISIBLE)
