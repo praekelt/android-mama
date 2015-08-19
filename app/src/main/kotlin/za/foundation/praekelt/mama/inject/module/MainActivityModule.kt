@@ -20,6 +20,13 @@ import za.foundation.praekelt.mama.util.Constants as _C
  */
 Module
 class MainActivityModule(val activity: MainActivity) {
+    val categoryPageAdapter: CategoryPageAdapter
+    init {
+        val locale:String = activity.defaultSharedPreferences
+                .getString(_C.SHARED_PREFS_LOCALE, _C.SHARED_PREFS_LOCALE_DEFAULT)
+        categoryPageAdapter = CategoryPageAdapter(activity.getSupportFragmentManager(), locale)
+    }
+
     Provides
     ActivityScope
     fun provideActivityContext(): Context {
@@ -46,10 +53,9 @@ class MainActivityModule(val activity: MainActivity) {
 
     Provides
     ActivityScope
-    fun provideCategoryPageAdapter(fm: FragmentManager): CategoryPageAdapter{
-        val locale:String = activity.defaultSharedPreferences
-                .getString(_C.SHARED_PREFS_LOCALE, _C.SHARED_PREFS_LOCALE_DEFAULT)
-        return CategoryPageAdapter(fm, locale)
+    fun provideCategoryPageAdapter(): CategoryPageAdapter{
+        categoryPageAdapter.refresh().subscribe{categoryPageAdapter.notifyDataSetChanged()}
+        return categoryPageAdapter
     }
 
     Provides
