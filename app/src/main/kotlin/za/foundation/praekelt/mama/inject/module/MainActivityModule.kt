@@ -55,7 +55,6 @@ class MainActivityModule(val activity: MainActivity) {
     Provides
     ActivityScope
     fun provideViewPager(categoryPagerAdapter: CategoryPageAdapter): ViewPager {
-        categoryPagerAdapter.refresh().subscribe{ }
         activity.viewPager.setAdapter(categoryPagerAdapter)
         return activity.viewPager
     }
