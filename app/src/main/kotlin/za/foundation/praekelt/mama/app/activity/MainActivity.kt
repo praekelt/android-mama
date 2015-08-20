@@ -16,27 +16,27 @@ import kotlinx.android.synthetic.include_main_activity_view_pager.simple_toolbar
 import kotlinx.android.synthetic.include_main_activity_view_pager.tabs
 import kotlinx.android.synthetic.include_main_activity_view_pager.viewpager
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.connectivityManager
-import org.jetbrains.anko.defaultSharedPreferences
+import org.jetbrains.anko.adapter
 import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
+import rx.observers.Observers
+import rx.subscriptions.CompositeSubscription
 import za.foundation.praekelt.mama.R
-import za.foundation.praekelt.mama.api.db.util.DBTransaction
 import za.foundation.praekelt.mama.api.rest.UCDService
-import za.foundation.praekelt.mama.app.CategoryPageAdapter
+import za.foundation.praekelt.mama.api.rest.model.Repo
+import za.foundation.praekelt.mama.api.rest.model.RepoPull
+import za.foundation.praekelt.mama.app.App
+import za.foundation.praekelt.mama.inject.component.ApplicationComponent
 import za.foundation.praekelt.mama.inject.component.DaggerMainActivityComponent
 import za.foundation.praekelt.mama.inject.component.MainActivityComponent
 import za.foundation.praekelt.mama.inject.module.MainActivityModule
-import za.foundation.praekelt.mama.inject.module.RestModule
-import za.foundation.praekelt.mama.util.SharedPrefsUtil
 import javax.inject.Inject
 import kotlin.properties.Delegates
 import za.foundation.praekelt.mama.util.Constants as _C
 
 public class MainActivity : AppCompatActivity(), AnkoLogger {
+    val TAG: String = "MainActivity"
 
     var ucdService: UCDService by Delegates.notNull()
-        @Inject set
     var mDrawerLayout: DrawerLayout by Delegates.notNull()
     var navigationView: NavigationView by Delegates.notNull()
         @Inject set
@@ -44,6 +44,15 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         @Inject set
     var tabLayout: TabLayout by Delegates.notNull()
         @Inject set
+    var networkObs: Observable<Boolean> by Delegates.notNull()
+        @Inject set
+    var cloneObs: Observable<Repo> by Delegates.notNull()
+        @Inject set
+    var updateObs: Observable<RepoPull> by Delegates.notNull()
+        @Inject set
+
+
+    val subscriptions: CompositeSubscription = CompositeSubscription()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super<AppCompatActivity>.onCreate(savedInstanceState)
@@ -60,47 +69,29 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         navigationView = this.nav_view
         viewPager = this.viewpager
         tabLayout = this.tabs
-        getActivityComponent().inject(this)
     }
 
     override fun onResume() {
         super<AppCompatActivity>.onResume()
+        activityComp().inject(this)
         println("resuming")
-        val networkObs: Observable<Boolean> = Observable
-                .just(connectivityManager.getActiveNetworkInfo())
-                .map { networkInfo -> networkInfo?.isConnected() ?: false }
 
         networkObs.filter { !it }
                 .subscribe { noInternetSnackBar() }
 
-        val hasRepoObs: Observable<Boolean> = networkObs.filter { it }
-                .map { SharedPrefsUtil.getCommitFromSharedPrefs(this) }
-                .map { it != "" }
+        val sub = Observers.create<Any>(
+                { evt -> activityComp().inject(this) },
+                { err -> info("Error connecting to network") })
 
-        hasRepoObs.filter { !it }
-                .doOnNext { info("repo doesn't exist") }
-                .doOnNext { println("repo doesn't exist") }
-                .flatMap { ucdService.cloneRepo() }
-                .doOnNext { DBTransaction.saveRepo(it) }
-                .doOnNext { SharedPrefsUtil.saveCommitToSharedPrefs(this, it.commit) }
-                .doOnNext { println("SP saved") }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { getActivityComponent().inject(this) }
-
-        hasRepoObs.filter { it }
-                .doOnNext { info("repo exists, checking for update") }
-                .flatMap { ucdService.getRepoStatus() }
-                .filter { SharedPrefsUtil.getCommitFromSharedPrefs(this) != it.commit }
-                .doOnNext { info("getting update") }
-                .flatMap {
-                    ucdService.pullRepo(SharedPrefsUtil.getCommitFromSharedPrefs(this))
-                }
-                .doOnNext { DBTransaction.saveRepoPull(it) }
-                .doOnNext { println("saved update data") }
-                .doOnNext { SharedPrefsUtil.saveCommitToSharedPrefs(this, it.commit) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe{ getActivityComponent().inject(this) }
+        subscriptions.add(cloneObs.subscribe(sub))
+        subscriptions.add(updateObs.subscribe(sub))
         println("end resuming")
+    }
+
+    override fun onPause() {
+        super<AppCompatActivity>.onPause()
+        if (subscriptions.hasSubscriptions())
+            subscriptions.unsubscribe()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -123,10 +114,14 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         return super<AppCompatActivity>.onOptionsItemSelected(item)
     }
 
-    fun getActivityComponent(): MainActivityComponent {
+    val appComp = fun(): ApplicationComponent {
+        return (getApplication() as App).getApplicationComponent()
+    }
+
+    val activityComp = fun(): MainActivityComponent {
         return DaggerMainActivityComponent.builder()
+                .applicationComponent(appComp())
                 .mainActivityModule(MainActivityModule(this))
-                .restModule(RestModule())
                 .build()
     }
 
@@ -134,5 +129,14 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         Snackbar.make(
                 this.drawer_layout, getString(R.string.no_internet_connection),
                 Snackbar.LENGTH_LONG).show()
+    }
+
+    override fun onDestroy() {
+        //NB: Must set view pager to null otherwise will crash onResume
+        //if app is run for first time and is rotated while empty list
+        //notification is shown
+        viewPager.adapter = null
+        activityComp().bus().post(Pair(TAG, listOf(cloneObs, updateObs)))
+        super<AppCompatActivity>.onDestroy()
     }
 }
