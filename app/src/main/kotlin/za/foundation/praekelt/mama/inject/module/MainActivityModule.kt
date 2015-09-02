@@ -128,65 +128,126 @@ class MainActivityModule(val activity: MainActivity) : AnkoLogger {
 
     Provides
     ActivityScope
-    fun provideCloneRepoObservable(networkObs: Observable<Boolean>, ucdService: UCDService,
-                                   currentCommitFunc: CurrentCommitFunc,
-                                   saveCommitAction: SaveCommitAction): Observable<Repo> {
-        val cached: List<Observable<out Any>>? = activity.appComp().app()
-                .getCachedObservables(MainActivity.TAG)
-        return if (cached != null)
-            cached[0] as Observable<Repo>
-        else
-            networkObs.filter { it }
-                    .map(currentCommitFunc)
-                    .map { it != "" }
-                    .filter { !it }
-                    .doOnNext { info("repo doesn't exist") }
-                    .flatMap { ucdService.cloneRepo() }
-                    .doOnNext { DBTransaction.saveRepo(it) }
-                    .doOnNext (saveCommitAction)
-                    .doOnNext { info("SP saved") }
-                    .doOnNext { Observable.interval(500, TimeUnit.MILLISECONDS).toBlocking().first() }
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .cache()
+    fun provideRepoObservable(networkObs: Observable<Boolean>, saveCommitAction: SaveCommitAction,
+                              currentCommitFunc: CurrentCommitFunc, ucdService: UCDService,
+                              compareCommitFunc: CompareCommitFunc): Observable<Repo>{
+        info("merging both obs")
+
+        val obs: Observable<List<Observable<out Any>>?> =
+                Observable.just(activity.appComp().app().getCachedObservables(MainActivity.TAG))
+
+        val cachedObs: Observable<Repo> = obs.filter { it != null }
+                .doOnNext{ info("merging cached obs")}
+            .flatMap{ (it!![0] as Observable<Repo>) }
+
+        val freshObs: Observable<Repo> = obs.filter { it == null }
+                .doOnNext{ info("merging fresh obs") }
+                .flatMap{ createCloneObs(networkObs, currentCommitFunc, ucdService)
+                            .mergeWith(
+                                    createUpdateObs(networkObs, currentCommitFunc,
+                                            compareCommitFunc, ucdService)
+                            )}
+
+        return Observable.merge(cachedObs, freshObs)
+                .doOnNext { DBTransaction.saveRepo(it) }
+                .doOnNext (saveCommitAction)
+                .doOnNext { info("SP saved") }
+                .doOnNext { Observable.interval(500, TimeUnit.MILLISECONDS).toBlocking().first() }
+                .observeOn(AndroidSchedulers.mainThread())
+                .cache()
     }
 
-    Provides
-    ActivityScope
-    fun provideUpdateRepoObservable(networkObs: Observable<Boolean>, ucdService: UCDService,
-                                    currentCommitFunc: CurrentCommitFunc,
-                                    compareCommitFunc: CompareCommitFunc,
-                                    saveCommitAction: SaveCommitAction): Observable<RepoPull> {
-        val cached: List<Observable<out Any>>? = activity.appComp().app()
-                .getCachedObservables(MainActivity.TAG)
-        return if (cached != null)
-            cached[1] as Observable<RepoPull>
-        else
-            networkObs.filter { it }
-                    .map(currentCommitFunc)
-                    .map { it != "" }
-                    .filter { it }
-                    .doOnNext { info("repo exists, checking for update") }
-                    .flatMap { ucdService.getRepoStatus() }
-                    .filter(compareCommitFunc)
-                    .map { it.commit != "" }
-                    .map(currentCommitFunc)
-                    .doOnNext { info("getting update") }
-                    .flatMap {
-                        ucdService.pullRepo(it)
-                    }
-                    .doOnNext { DBTransaction.saveRepoPull(it) }
-                    .doOnNext { println("saved update data") }
-                    .doOnNext (saveCommitAction)
-                    .doOnNext { println("SP updated") }
-                    .doOnNext { Observable.interval(500, TimeUnit.MILLISECONDS).toBlocking().first() }
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .cache()
-    }
+//    Provides
+//    ActivityScope
+//    fun provideCloneRepoObservable(networkObs: Observable<Boolean>, ucdService: UCDService,
+//                                   currentCommitFunc: CurrentCommitFunc,
+//                                   saveCommitAction: SaveCommitAction): Observable<Repo> {
+//        val cached: List<Observable<out Any>>? = activity.appComp().app()
+//                .getCachedObservables(MainActivity.TAG)
+//
+//        return if (cached != null)
+//            cached[0] as Observable<Repo>
+//        else
+//            networkObs.filter { it }
+//                    .map(currentCommitFunc)
+//                    .map { it != "" }
+//                    .filter { !it }
+//                    .doOnNext { info("repo doesn't exist") }
+//                    .flatMap { ucdService.cloneRepo() }
+//                    .doOnNext { DBTransaction.saveRepo(it) }
+//                    .doOnNext (saveCommitAction)
+//                    .doOnNext { info("SP saved") }
+//                    .doOnNext { Observable.interval(500, TimeUnit.MILLISECONDS).toBlocking().first() }
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .cache()
+//    }
+//
+//    Provides
+//    ActivityScope
+//    fun provideUpdateRepoObservable(networkObs: Observable<Boolean>, ucdService: UCDService,
+//                                    currentCommitFunc: CurrentCommitFunc,
+//                                    compareCommitFunc: CompareCommitFunc,
+//                                    saveCommitAction: SaveCommitAction): Observable<RepoPull> {
+//        val cached: List<Observable<out Any>>? = activity.appComp().app()
+//                .getCachedObservables(MainActivity.TAG)
+//        return if (cached != null)
+//            cached[1] as Observable<RepoPull>
+//        else
+//            networkObs.filter { it }
+//                    .map(currentCommitFunc)
+//                    .map { it != "" }
+//                    .filter { it }
+//                    .doOnNext { info("repo exists, checking for update") }
+//                    .flatMap { ucdService.getRepoStatus() }
+//                    .filter(compareCommitFunc)
+//                    .map { it.commit != "" }
+//                    .map(currentCommitFunc)
+//                    .doOnNext { info("getting update") }
+//                    .flatMap {
+//                        ucdService.pullRepo(it)
+//                    }
+//                    .doOnNext { DBTransaction.saveRepoPull(it) }
+//                    .doOnNext { println("saved update data") }
+//                    .doOnNext (saveCommitAction)
+//                    .doOnNext { println("SP updated") }
+//                    .doOnNext { Observable.interval(500, TimeUnit.MILLISECONDS).toBlocking().first() }
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .cache()
+//    }
 
     Provides
     ActivityScope
     fun provideUCDService(): UCDService {
         return createUCDService()
+    }
+
+    fun createCloneObs(networkObs: Observable<Boolean>, currentCommitFunc: CurrentCommitFunc,
+                       ucdService: UCDService):
+            Observable<Repo>{
+        return networkObs.filter { it }
+                .map(currentCommitFunc)
+                .map { it != "" }
+                .filter { !it }
+                .doOnNext { info("repo doesn't exist") }
+                .flatMap { ucdService.cloneRepo() }
+    }
+
+    fun createUpdateObs(networkObs: Observable<Boolean>, currentCommitFunc: CurrentCommitFunc,
+                        compareCommitFunc: CompareCommitFunc, ucdService: UCDService):
+            Observable<RepoPull>{
+        return networkObs.filter { it }
+                .map(currentCommitFunc)
+                .map { it != "" }
+                .filter { it }
+                .doOnNext { info("repo exists, checking for update") }
+                .flatMap { ucdService.getRepoStatus() }
+                .filter(compareCommitFunc)
+                .map { it.commit != "" }
+                .map(currentCommitFunc)
+                .doOnNext { info("getting update") }
+                .flatMap {
+                    ucdService.pullRepo(it)
+                }
     }
 
     abstract class CommitFunc<I, R>(var act: Context?) : Func1<I, R>

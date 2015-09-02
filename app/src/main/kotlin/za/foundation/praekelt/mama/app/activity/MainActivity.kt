@@ -23,8 +23,8 @@ import rx.subscriptions.CompositeSubscription
 import za.foundation.praekelt.mama.R
 import za.foundation.praekelt.mama.api.rest.UCDService
 import za.foundation.praekelt.mama.api.rest.model.Repo
-import za.foundation.praekelt.mama.api.rest.model.RepoPull
 import za.foundation.praekelt.mama.app.App
+import za.foundation.praekelt.mama.app.CategoryPageAdapter
 import za.foundation.praekelt.mama.inject.component.ApplicationComponent
 import za.foundation.praekelt.mama.inject.component.DaggerMainActivityComponent
 import za.foundation.praekelt.mama.inject.component.MainActivityComponent
@@ -41,7 +41,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
     var fragmentPosition: Int = 0
         private set
 
-    companion object{
+    companion object {
         val TAG: String = "MainActivity"
     }
 
@@ -60,9 +60,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         @Inject set
     var networkObs: Observable<Boolean> by Delegates.notNull()
         @Inject set
-    var cloneObs: Observable<Repo> by Delegates.notNull()
-        @Inject set
-    var updateObs: Observable<RepoPull> by Delegates.notNull()
+    var repoObs: Observable<Repo> by Delegates.notNull()
         @Inject set
     val activityComp: MainActivityComponent by lazy { getActivityComponent() }
 
@@ -169,7 +167,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         viewPager.adapter = null
         activityComp.currentCommitFunc().act = null
         activityComp.saveCommitAction().act = null
-        activityComp.bus().post(ObservablePost(TAG, listOf(cloneObs, updateObs)))
+        activityComp.bus().post(ObservablePost(TAG, listOf(repoObs)))
         activityComp.bus().post(FunctionPost(TAG, listOf(activityComp.currentCommitFunc())))
         activityComp.bus().post(ActionPost(TAG, listOf(activityComp.saveCommitAction())))
         super<AppCompatActivity>.onDestroy()

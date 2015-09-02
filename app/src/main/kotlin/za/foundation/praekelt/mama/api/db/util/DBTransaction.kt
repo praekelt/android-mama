@@ -43,7 +43,11 @@ public object DBTransaction: AnkoLogger{
     }
 
     fun saveRepo(repo: Repo): Boolean{
-        return saveAll(repo.categories, repo.locales, repo.pages)
+        return if(repo is RepoPull)
+            saveRepoPull(repo)
+        else
+            saveAll(repo.categories, repo.locales, repo.pages)
+
     }
 
     fun saveRepoPull(pull: RepoPull): Boolean{
