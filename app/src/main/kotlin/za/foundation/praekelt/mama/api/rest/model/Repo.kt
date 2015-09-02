@@ -11,7 +11,7 @@ import java.util.ArrayList
  * server repo
  */
 
-class Repo(var commit: String = "", var pages: List<Page> = ArrayList<Page> (),
+open class Repo(var commit: String = "", var pages: List<Page> = ArrayList<Page> (),
            var locales:List<Localisation> = ArrayList<Localisation>(),
            var categories:List<Category> = ArrayList<Category>()){
     companion object{

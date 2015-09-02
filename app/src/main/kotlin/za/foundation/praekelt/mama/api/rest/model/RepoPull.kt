@@ -10,10 +10,11 @@ import java.util.ArrayList
  * Repository pull request
  */
 
-class RepoPull(var commit: String = "",  var pages: List<Page> = ArrayList<Page>(),
-               var locales: List<Localisation> = ArrayList<Localisation>(),
-               var categories: List<Category> = ArrayList<Category>(),
-               var diffs: List<FormattedDiff> = ArrayList<FormattedDiff>()){
+class RepoPull(commit: String = "",  pages: List<Page> = ArrayList<Page> (),
+               locales: List<Localisation> = ArrayList<Localisation> (),
+               categories: List<Category> = ArrayList<Category> (),
+               var diffs: List<FormattedDiff> = ArrayList<FormattedDiff> ()):
+        Repo(commit, pages, locales, categories){
     companion object{
         val FIELD_COMMIT = "commit"
         val FIELD_OTHER = "other"
