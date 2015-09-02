@@ -104,11 +104,19 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
                 .subscribe { noInternetSnackBar() }
 
         val sub = Observers.create<Any>(
-                { evt -> tabLayout = activityComp.tabLayout() },
-                { err -> info("Error connecting to network ###=> ${err.getMessage()}") })
+                { evt ->
+                    //Refresh adapter and updates the tabLayout is necessary
+                    (viewPager.getAdapter() as CategoryPageAdapter).refresh()
+                            .filter { it }
+                            .doOnNext { tabLayout.setupWithViewPager(viewPager) }
+                            .subscribe {
+                                (viewPager.getAdapter() as CategoryPageAdapter).notifyDataSetChanged()
+                            }
+                },
+                { err -> info("Error connecting to network ###=> ${err}") },
+                { -> info("complete") })
 
-        subscriptions.add(cloneObs.subscribe(sub))
-        subscriptions.add(updateObs.subscribe(sub))
+        subscriptions.add(repoObs.subscribe(sub))
         println("end resuming")
     }
 

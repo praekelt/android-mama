@@ -67,17 +67,20 @@ class MainActivityModule(val activity: MainActivity) : AnkoLogger {
     }
 
     Provides
+    ActivityScope
     fun provideCategoryPageAdapter(): CategoryPageAdapter {
         return CategoryPageAdapter(activity.getSupportFragmentManager(), locale)
     }
 
     Provides
+    ActivityScope
     fun provideViewPager(categoryPagerAdapter: CategoryPageAdapter): ViewPager {
         activity.viewPager.setAdapter(categoryPagerAdapter)
         return activity.viewPager
     }
 
     Provides
+    ActivityScope
     fun provideTabLayout(viewPager: ViewPager): TabLayout {
         info("getting tl")
         viewPager.setCurrentItem(activity.tabPosition)
