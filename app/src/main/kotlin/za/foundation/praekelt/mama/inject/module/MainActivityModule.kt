@@ -12,15 +12,21 @@ import org.jetbrains.anko.connectivityManager
 import org.jetbrains.anko.defaultSharedPreferences
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
+import rx.functions.Action
+import rx.functions.Action1
+import rx.functions.Func1
+import rx.functions.Function
 import za.foundation.praekelt.mama.api.db.util.DBTransaction
 import za.foundation.praekelt.mama.api.rest.UCDService
 import za.foundation.praekelt.mama.api.rest.createUCDService
 import za.foundation.praekelt.mama.api.rest.model.Repo
 import za.foundation.praekelt.mama.api.rest.model.RepoPull
+import za.foundation.praekelt.mama.api.rest.model.RepoStatus
 import za.foundation.praekelt.mama.app.CategoryPageAdapter
 import za.foundation.praekelt.mama.app.activity.MainActivity
 import za.foundation.praekelt.mama.inject.scope.ActivityScope
 import za.foundation.praekelt.mama.util.SharedPrefsUtil
+import java.util.concurrent.TimeUnit
 import za.foundation.praekelt.mama.util.Constants as _C
 
 /**
@@ -28,13 +34,12 @@ import za.foundation.praekelt.mama.util.Constants as _C
  */
 Module
 class MainActivityModule(val activity: MainActivity) : AnkoLogger {
-    val categoryPageAdapter: CategoryPageAdapter
+    val locale: String
 
     init {
         println("init module")
-        val locale: String = activity.defaultSharedPreferences
+        locale: String = activity.defaultSharedPreferences
                 .getString(_C.SHARED_PREFS_LOCALE, _C.SHARED_PREFS_LOCALE_DEFAULT)
-        categoryPageAdapter = CategoryPageAdapter(activity.getSupportFragmentManager(), locale)
     }
 
     Provides
@@ -62,75 +67,118 @@ class MainActivityModule(val activity: MainActivity) : AnkoLogger {
     }
 
     Provides
-    ActivityScope
     fun provideCategoryPageAdapter(): CategoryPageAdapter {
-        categoryPageAdapter.refresh().subscribe { categoryPageAdapter.notifyDataSetChanged() }
-        return categoryPageAdapter
+        return CategoryPageAdapter(activity.getSupportFragmentManager(), locale)
     }
 
     Provides
-    ActivityScope
     fun provideViewPager(categoryPagerAdapter: CategoryPageAdapter): ViewPager {
-        println("addr => $this")
         activity.viewPager.setAdapter(categoryPagerAdapter)
         return activity.viewPager
     }
 
     Provides
-    ActivityScope
     fun provideTabLayout(viewPager: ViewPager): TabLayout {
+        info("getting tl")
+        viewPager.setCurrentItem(activity.tabPosition)
         activity.tabLayout.setupWithViewPager(viewPager)
         return activity.tabLayout
     }
 
     Provides
-    ActivityScope
     fun providesNetworkObservable(): Observable<Boolean> {
-        return Observable.just(activity.connectivityManager.getActiveNetworkInfo().isConnected())
+        return Observable.just(activity.connectivityManager
+                .getActiveNetworkInfo()?.isConnected() ?: false)
     }
 
     Provides
     ActivityScope
-    fun provideCloneRepoObservable(networkObs: Observable<Boolean>, ucdService: UCDService): Observable<Repo> {
-        val cached: List<Observable<out Any>>? = activity.appComp().app().getCachedObservables(activity.TAG)
+    fun providesCurrentCommitFunction(): CurrentCommitFunc {
+        val cached: List<Function>? = activity.appComp().app().getCachedFunction(MainActivity.TAG)
+        if (cached != null) {
+            println("changing cached current function  activity")
+            (cached[0] as CurrentCommitFunc).act = activity
+            return (cached[0] as CurrentCommitFunc)
+        } else
+            return CurrentCommitFunc(activity)
+    }
+
+    Provides
+    ActivityScope
+    fun providesCompareCommitFunction(): CompareCommitFunc {
+        val cached: List<Function>? = activity.appComp().app().getCachedFunction(MainActivity.TAG)
+        if (cached != null) {
+            println("changing cached compare function activity")
+            (cached[1] as CompareCommitFunc).act = activity
+            return (cached[0] as CompareCommitFunc)
+        } else
+            return CompareCommitFunc(activity)
+    }
+
+    Provides
+    ActivityScope
+    fun provideSaveCommitAction(): SaveCommitAction {
+        val cached: List<Action>? = activity.appComp().app().getCachedAction(MainActivity.TAG)
+        if (cached != null) {
+            (cached[0] as SaveCommitAction).act = activity
+            return (cached[0] as SaveCommitAction)
+        } else
+            return SaveCommitAction(activity)
+    }
+
+    Provides
+    ActivityScope
+    fun provideCloneRepoObservable(networkObs: Observable<Boolean>, ucdService: UCDService,
+                                   currentCommitFunc: CurrentCommitFunc,
+                                   saveCommitAction: SaveCommitAction): Observable<Repo> {
+        val cached: List<Observable<out Any>>? = activity.appComp().app()
+                .getCachedObservables(MainActivity.TAG)
         return if (cached != null)
             cached[0] as Observable<Repo>
         else
             networkObs.filter { it }
-                    .map { SharedPrefsUtil.getCommitFromSharedPrefs(activity) }
+                    .map(currentCommitFunc)
                     .map { it != "" }
                     .filter { !it }
                     .doOnNext { info("repo doesn't exist") }
-                    .doOnNext { println("repo doesn't exist") }
                     .flatMap { ucdService.cloneRepo() }
                     .doOnNext { DBTransaction.saveRepo(it) }
-                    .doOnNext { SharedPrefsUtil.saveCommitToSharedPrefs(activity, it.commit) }
-                    .doOnNext { println("SP saved") }
+                    .doOnNext (saveCommitAction)
+                    .doOnNext { info("SP saved") }
+                    .doOnNext { Observable.interval(500, TimeUnit.MILLISECONDS).toBlocking().first() }
                     .observeOn(AndroidSchedulers.mainThread())
                     .cache()
     }
 
     Provides
     ActivityScope
-    fun provideUpdateRepoObservable(networkObs: Observable<Boolean>, ucdService: UCDService): Observable<RepoPull> {
-        val cached: List<Observable<out Any>>? = activity.appComp().app().getCachedObservables("MainActivity")
+    fun provideUpdateRepoObservable(networkObs: Observable<Boolean>, ucdService: UCDService,
+                                    currentCommitFunc: CurrentCommitFunc,
+                                    compareCommitFunc: CompareCommitFunc,
+                                    saveCommitAction: SaveCommitAction): Observable<RepoPull> {
+        val cached: List<Observable<out Any>>? = activity.appComp().app()
+                .getCachedObservables(MainActivity.TAG)
         return if (cached != null)
             cached[1] as Observable<RepoPull>
         else
             networkObs.filter { it }
-                    .map { SharedPrefsUtil.getCommitFromSharedPrefs(activity) }
+                    .map(currentCommitFunc)
                     .map { it != "" }
                     .filter { it }
                     .doOnNext { info("repo exists, checking for update") }
                     .flatMap { ucdService.getRepoStatus() }
-                    .filter { SharedPrefsUtil.getCommitFromSharedPrefs(activity) != it.commit }
+                    .filter(compareCommitFunc)
+                    .map { it.commit != "" }
+                    .map(currentCommitFunc)
                     .doOnNext { info("getting update") }
                     .flatMap {
-                        ucdService.pullRepo(SharedPrefsUtil.getCommitFromSharedPrefs(activity))
+                        ucdService.pullRepo(it)
                     }
                     .doOnNext { DBTransaction.saveRepoPull(it) }
                     .doOnNext { println("saved update data") }
-                    .doOnNext { SharedPrefsUtil.saveCommitToSharedPrefs(activity, it.commit) }
+                    .doOnNext (saveCommitAction)
+                    .doOnNext { println("SP updated") }
+                    .doOnNext { Observable.interval(500, TimeUnit.MILLISECONDS).toBlocking().first() }
                     .observeOn(AndroidSchedulers.mainThread())
                     .cache()
     }
@@ -139,5 +187,25 @@ class MainActivityModule(val activity: MainActivity) : AnkoLogger {
     ActivityScope
     fun provideUCDService(): UCDService {
         return createUCDService()
+    }
+
+    abstract class CommitFunc<I, R>(var act: Context?) : Func1<I, R>
+
+    class CurrentCommitFunc(act: Context?) : CommitFunc<Boolean, String>(act) {
+        override fun call(t: Boolean): String {
+            return SharedPrefsUtil.getCommitFromSharedPrefs(act!!)
+        }
+    }
+
+    class CompareCommitFunc(act: Context?) : CommitFunc<RepoStatus, Boolean>(act) {
+        override fun call(repo: RepoStatus?): Boolean? {
+            return SharedPrefsUtil.getCommitFromSharedPrefs(act!!) != repo!!.commit
+        }
+    }
+
+    class SaveCommitAction(var act: Context?) : Action1<Repo> {
+        override fun call(repo: Repo): Unit {
+            SharedPrefsUtil.saveCommitToSharedPrefs(act!!, repo.commit)
+        }
     }
 }

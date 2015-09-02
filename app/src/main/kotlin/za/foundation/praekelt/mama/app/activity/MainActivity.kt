@@ -29,12 +29,26 @@ import za.foundation.praekelt.mama.inject.component.ApplicationComponent
 import za.foundation.praekelt.mama.inject.component.DaggerMainActivityComponent
 import za.foundation.praekelt.mama.inject.component.MainActivityComponent
 import za.foundation.praekelt.mama.inject.module.MainActivityModule
+import za.foundation.praekelt.mama.util.otto.ActionPost
+import za.foundation.praekelt.mama.util.otto.FunctionPost
+import za.foundation.praekelt.mama.util.otto.ObservablePost
 import javax.inject.Inject
 import kotlin.properties.Delegates
 import za.foundation.praekelt.mama.util.Constants as _C
 
 public class MainActivity : AppCompatActivity(), AnkoLogger {
-    val TAG: String = "MainActivity"
+    var tabPosition: Int = 0
+    var fragmentPosition: Int = 0
+        private set
+
+    companion object{
+        val TAG: String = "MainActivity"
+    }
+
+    private object argsKeys {
+        val tabPositionKey = "tabPosition"
+        val fragmentPositionKey = "fragPosition"
+    }
 
     var ucdService: UCDService by Delegates.notNull()
     var mDrawerLayout: DrawerLayout by Delegates.notNull()
@@ -50,6 +64,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         @Inject set
     var updateObs: Observable<RepoPull> by Delegates.notNull()
         @Inject set
+    val activityComp: MainActivityComponent by lazy { getActivityComponent() }
 
 
     val subscriptions: CompositeSubscription = CompositeSubscription()
@@ -65,23 +80,34 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         ab.setHomeAsUpIndicator(R.drawable.abc_ic_ab_back_mtrl_am_alpha)
         ab.setDisplayHomeAsUpEnabled(true)
 
+        Observable.just(savedInstanceState)
+                .filter { it != null }
+                .flatMap { Observable.from(it?.keySet()) }
+                .subscribe { key ->
+                    info("restoring frag $key")
+                    when (key) {
+                        argsKeys.tabPositionKey -> tabPosition = savedInstanceState!!.getInt(key, 0)
+                    }
+                }
+
         mDrawerLayout = this.drawer_layout
         navigationView = this.nav_view
         viewPager = this.viewpager
         tabLayout = this.tabs
+        activityComp.inject(this)
+        viewPager.setCurrentItem(tabPosition)
     }
 
     override fun onResume() {
         super<AppCompatActivity>.onResume()
-        activityComp().inject(this)
         println("resuming")
 
         networkObs.filter { !it }
                 .subscribe { noInternetSnackBar() }
 
         val sub = Observers.create<Any>(
-                { evt -> activityComp().inject(this) },
-                { err -> info("Error connecting to network") })
+                { evt -> tabLayout = activityComp.tabLayout() },
+                { err -> info("Error connecting to network ###=> ${err.getMessage()}") })
 
         subscriptions.add(cloneObs.subscribe(sub))
         subscriptions.add(updateObs.subscribe(sub))
@@ -92,6 +118,11 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         super<AppCompatActivity>.onPause()
         if (subscriptions.hasSubscriptions())
             subscriptions.unsubscribe()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        outState?.putInt(argsKeys.tabPositionKey, tabLayout.getSelectedTabPosition())
+        super<AppCompatActivity>.onSaveInstanceState(outState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -118,7 +149,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         return (getApplication() as App).getApplicationComponent()
     }
 
-    val activityComp = fun(): MainActivityComponent {
+    fun getActivityComponent(): MainActivityComponent {
         return DaggerMainActivityComponent.builder()
                 .applicationComponent(appComp())
                 .mainActivityModule(MainActivityModule(this))
@@ -136,7 +167,11 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         //if app is run for first time and is rotated while empty list
         //notification is shown
         viewPager.adapter = null
-        activityComp().bus().post(Pair(TAG, listOf(cloneObs, updateObs)))
+        activityComp.currentCommitFunc().act = null
+        activityComp.saveCommitAction().act = null
+        activityComp.bus().post(ObservablePost(TAG, listOf(cloneObs, updateObs)))
+        activityComp.bus().post(FunctionPost(TAG, listOf(activityComp.currentCommitFunc())))
+        activityComp.bus().post(ActionPost(TAG, listOf(activityComp.saveCommitAction())))
         super<AppCompatActivity>.onDestroy()
     }
 }
