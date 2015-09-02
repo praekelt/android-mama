@@ -11,6 +11,7 @@ import com.raizlabs.android.dbflow.sql.language.Select
 import org.jetbrains.anko.find
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import za.foundation.praekelt.mama.R
 import za.foundation.praekelt.mama.api.model.Page
 import za.foundation.praekelt.mama.api.model.Page_Table
@@ -66,6 +67,7 @@ class CategoryListAdapter(val categoryUuid: String, val locale: String,
                     Log.i("CLA", "list size = ${pages.size()}")
                     return@map pages.isNotEmpty()
                 }
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 

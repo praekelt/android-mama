@@ -16,6 +16,7 @@ import rx.functions.Action
 import rx.functions.Action1
 import rx.functions.Func1
 import rx.functions.Function
+import rx.schedulers.Schedulers
 import za.foundation.praekelt.mama.api.db.util.DBTransaction
 import za.foundation.praekelt.mama.api.rest.UCDService
 import za.foundation.praekelt.mama.api.rest.createUCDService
@@ -156,6 +157,7 @@ class MainActivityModule(val activity: MainActivity) : AnkoLogger {
                 .doOnNext (saveCommitAction)
                 .doOnNext { info("SP saved") }
                 .doOnNext { Observable.interval(500, TimeUnit.MILLISECONDS).toBlocking().first() }
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .cache()
     }
