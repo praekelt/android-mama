@@ -23,6 +23,7 @@ import za.foundation.praekelt.mama.api.rest.createUCDService
 import za.foundation.praekelt.mama.api.rest.model.Repo
 import za.foundation.praekelt.mama.api.rest.model.RepoPull
 import za.foundation.praekelt.mama.api.rest.model.RepoStatus
+import za.foundation.praekelt.mama.app.App
 import za.foundation.praekelt.mama.app.CategoryPageAdapter
 import za.foundation.praekelt.mama.app.activity.MainActivity
 import za.foundation.praekelt.mama.inject.scope.ActivityScope
@@ -36,11 +37,14 @@ import za.foundation.praekelt.mama.util.Constants as _C
 Module
 class MainActivityModule(val activity: MainActivity) : AnkoLogger {
     val locale: String
+    val cachedFunctions: List<Function>?
 
     init {
         println("init module")
         locale: String = activity.defaultSharedPreferences
                 .getString(_C.SHARED_PREFS_LOCALE, _C.SHARED_PREFS_LOCALE_DEFAULT)
+
+        cachedFunctions = activity.appComp().app().getCachedFunction(MainActivity.TAG)
     }
 
     Provides
@@ -89,6 +93,7 @@ class MainActivityModule(val activity: MainActivity) : AnkoLogger {
         return activity.tabLayout
     }
 
+    //Observable to check whether device is connected to a network or not
     Provides
     fun providesNetworkObservable(): Observable<Boolean> {
         return Observable.just(activity.connectivityManager
@@ -140,10 +145,13 @@ class MainActivityModule(val activity: MainActivity) : AnkoLogger {
         val obs: Observable<List<Observable<out Any>>?> =
                 Observable.just(activity.appComp().app().getCachedObservables(MainActivity.TAG))
 
+        //If cached observable list found, emit the only observable in the list
         val cachedObs: Observable<Repo> = obs.filter { it != null }
-                .doOnNext{ info("merging cached obs")}
-            .flatMap{ (it!![0] as Observable<Repo>) }
+                .doOnNext { info("merging cached obs") }
+                .flatMap { (it!![0] as Observable<Repo>) }
 
+        //If no cached observable list found generate a new one by merging a clone observable with
+        //an update observable
         val freshObs: Observable<Repo> = obs.filter { it == null }
                 .doOnNext{ info("merging fresh obs") }
                 .flatMap{ createCloneObs(networkObs, currentCommitFunc, ucdService)
@@ -152,6 +160,9 @@ class MainActivityModule(val activity: MainActivity) : AnkoLogger {
                                             compareCommitFunc, ucdService)
                             )}
 
+        //Merge the cached observable with the fresh observable. Since only one of the 2
+        //observables will ever emit items there are no worries that emissions from one of the 2
+        //will ever overwrite the processing due to emissions from the other
         return Observable.merge(cachedObs, freshObs)
                 .doOnNext { DBTransaction.saveRepo(it) }
                 .doOnNext (saveCommitAction)
@@ -168,9 +179,12 @@ class MainActivityModule(val activity: MainActivity) : AnkoLogger {
         return createUCDService()
     }
 
+    /**
+     * Creates an observable used to clone the repo for the first time
+     */
     fun createCloneObs(networkObs: Observable<Boolean>, currentCommitFunc: CurrentCommitFunc,
                        ucdService: UCDService):
-            Observable<Repo>{
+            Observable<Repo> {
         return networkObs.filter { it }
                 .map(currentCommitFunc)
                 .map { it != "" }
@@ -179,6 +193,9 @@ class MainActivityModule(val activity: MainActivity) : AnkoLogger {
                 .flatMap { ucdService.cloneRepo() }
     }
 
+    /**
+     * Creates an observable used to pull changes from the repo
+     */
     fun createUpdateObs(networkObs: Observable<Boolean>, currentCommitFunc: CurrentCommitFunc,
                         compareCommitFunc: CompareCommitFunc, ucdService: UCDService):
             Observable<RepoPull>{
@@ -197,6 +214,12 @@ class MainActivityModule(val activity: MainActivity) : AnkoLogger {
                 }
     }
 
+    /*
+     * Following classes are functions used by the clone, update and repo observables. They are
+     * separated in order to keep references to them in order to be able to change reference to the
+     * activity used in them. This is to avoid leaks of holding a reference to an activity that
+     * has been destroyed but cannot be destroyed because the observable keeps a reference to it
+     */
     abstract class CommitFunc<I, R>(var act: Context?) : Func1<I, R>
 
     class CurrentCommitFunc(act: Context?) : CommitFunc<Boolean, String>(act) {
