@@ -42,17 +42,6 @@ class App : Application(), AnkoLogger {
         LeakCanary.install(this)
     }
 
-    override fun onLowMemory() {
-        super<Application>.onLowMemory()
-        observables.clear()
-    }
-
-    override fun onTerminate() {
-        super<Application>.onTerminate()
-        observables.clear()
-        bus.unregister(this)
-    }
-
     fun getApplicationComponent(): ApplicationComponent {
         return DaggerApplicationComponent.builder()
                 .applicationModule(ApplicationModule(this)).build()
