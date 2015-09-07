@@ -41,6 +41,12 @@ class MainActivityModule(val activity: MainActivity) : AnkoLogger {
         return activity.navigationView
     }
 
+    Provides
+    ActivityScope
+    fun ProvideViewModel(): MainActivityViewModel {
+        return MainActivityViewModel(activity)
+    }
+
     //Observable to check whether device is connected to a network or not
     Provides
     fun providesNetworkObservable(): Observable<Boolean> {

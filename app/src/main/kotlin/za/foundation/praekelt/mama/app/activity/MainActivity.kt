@@ -1,5 +1,6 @@
 package za.foundation.praekelt.mama.app.activity
 
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
@@ -25,12 +26,12 @@ import za.foundation.praekelt.mama.api.rest.UCDService
 import za.foundation.praekelt.mama.api.rest.model.Repo
 import za.foundation.praekelt.mama.app.App
 import za.foundation.praekelt.mama.app.CategoryPageAdapter
+import za.foundation.praekelt.mama.app.viewmodel.MainActivityViewModel
+import za.foundation.praekelt.mama.databinding.ActivityMainBinding
 import za.foundation.praekelt.mama.inject.component.ApplicationComponent
 import za.foundation.praekelt.mama.inject.component.DaggerMainActivityComponent
 import za.foundation.praekelt.mama.inject.component.MainActivityComponent
 import za.foundation.praekelt.mama.inject.module.MainActivityModule
-import za.foundation.praekelt.mama.util.otto.ActionPost
-import za.foundation.praekelt.mama.util.otto.FunctionPost
 import za.foundation.praekelt.mama.util.otto.ObservablePost
 import javax.inject.Inject
 import kotlin.properties.Delegates
@@ -55,21 +56,17 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
     var navigationView: NavigationView by Delegates.notNull()
         @Inject set
     var viewPager: ViewPager by Delegates.notNull()
-        @Inject set
     var tabLayout: TabLayout by Delegates.notNull()
-        @Inject set
     var networkObs: Observable<Boolean> by Delegates.notNull()
         @Inject set
-    var repoObs: Observable<Repo> by Delegates.notNull()
+    var activityComp: MainActivityComponent by Delegates.notNull()
+    var viewModel: MainActivityViewModel by Delegates.notNull()
         @Inject set
-    val activityComp: MainActivityComponent by lazy { getActivityComponent() }
 
-
-    val subscriptions: CompositeSubscription = CompositeSubscription()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super<AppCompatActivity>.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         val toolbar: Toolbar = this.simple_toolbar
         setSupportActionBar(toolbar)
@@ -91,9 +88,10 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         mDrawerLayout = this.drawer_layout
         navigationView = this.nav_view
         viewPager = this.viewpager
-        tabLayout = this.tabs
+        activityComp = getActivityComponent()
         activityComp.inject(this)
-        viewPager.setCurrentItem(tabPosition)
+        viewModel.onAttachActivity(this)
+        binding.setMainActVM(viewModel)
     }
 
     override fun onResume() {
@@ -102,32 +100,15 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
 
         networkObs.filter { !it }
                 .subscribe { noInternetSnackBar() }
-
-        val sub = Observers.create<Any>(
-                { evt ->
-                    //Refresh adapter and updates the tabLayout is necessary
-                    (viewPager.getAdapter() as CategoryPageAdapter).refresh()
-                            .filter { it }
-                            .doOnNext { tabLayout.setupWithViewPager(viewPager) }
-                            .subscribe {
-                                (viewPager.getAdapter() as CategoryPageAdapter).notifyDataSetChanged()
-                            }
-                },
-                { err -> info("Error connecting to network ###=> ${err}") },
-                { -> info("complete") })
-
-        subscriptions.add(repoObs.subscribe(sub))
         println("end resuming")
     }
 
     override fun onPause() {
         super<AppCompatActivity>.onPause()
-        if (subscriptions.hasSubscriptions())
-            subscriptions.unsubscribe()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
-        outState?.putInt(argsKeys.tabPositionKey, tabLayout.getSelectedTabPosition())
+//        outState?.putInt(argsKeys.tabPositionKey, tabLayout.getSelectedTabPosition())
         super<AppCompatActivity>.onSaveInstanceState(outState)
     }
 
@@ -151,7 +132,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         return super<AppCompatActivity>.onOptionsItemSelected(item)
     }
 
-    val appComp = fun(): ApplicationComponent {
+    fun appComp(): ApplicationComponent {
         return (getApplication() as App).getApplicationComponent()
     }
 
@@ -172,12 +153,9 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         //NB: Must set view pager to null otherwise will crash onResume
         //if app is run for first time and is rotated while empty list
         //notification is shown
-        viewPager.adapter = null
-        activityComp.currentCommitFunc().act = null
-        activityComp.saveCommitAction().act = null
-        activityComp.bus().post(ObservablePost(TAG, listOf(repoObs)))
-        activityComp.bus().post(FunctionPost(TAG, listOf(activityComp.currentCommitFunc())))
-        activityComp.bus().post(ActionPost(TAG, listOf(activityComp.saveCommitAction())))
+        info("start destroy")
         super<AppCompatActivity>.onDestroy()
+        viewModel.onDestroy()
+        info("end destroy")
     }
 }
