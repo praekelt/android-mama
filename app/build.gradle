@@ -1,10 +1,11 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.android.databinding'
 apply plugin: 'kotlin-android'
-apply plugin: 'me.tatarka.retrolambda'
+//apply plugin: 'me.tatarka.retrolambda'
 
 buildscript{
     ext{
-        kotlin_version = '0.1-SNAPSHOT'
+        kotlin_version = '0.12.1218'
         androidAptVersion = "1.4"
         dbFlowVersion = "2.1.0"
         gsonVersion = "2.3"
@@ -31,7 +32,7 @@ buildscript{
     }
 
     dependencies{
-        classpath 'org.jetbrains.kotlin:kotlin-android-extensions:0.1-SNAPSHOT'
+        classpath 'org.jetbrains.kotlin:kotlin-android-extensions:0.12.1218'
     }
 }
 
@@ -54,14 +55,14 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
         test.java.srcDirs += 'src/test/kotlin'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 }
 
@@ -73,6 +74,7 @@ dependencies {
     compile "com.android.support:cardview-v7:$supportLibVersion"
     compile "com.android.support:recyclerview-v7:$supportLibVersion"
     compile "com.android.support:support-annotations:$supportLibVersion"
+    kapt 'com.android.databinding:compiler:1.0-rc1'
     compile "com.squareup.picasso:picasso:$picassoVersion"
     compile "com.squareup:otto:$ottoVersion"
     compile "com.squareup.okio:okio:$okioVersion"
