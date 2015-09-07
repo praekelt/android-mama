@@ -44,7 +44,11 @@ class MainActivityModule(val activity: MainActivity) : AnkoLogger {
     Provides
     ActivityScope
     fun ProvideViewModel(): MainActivityViewModel {
-        return MainActivityViewModel(activity)
+        val cached: BaseActivityViewModel<out Activity>? = activity.appComp().app().getCachedViewModel(MainActivityViewModel.TAG)
+        return if(cached != null)
+            cached as MainActivityViewModel
+        else
+            MainActivityViewModel(activity)
     }
 
     //Observable to check whether device is connected to a network or not
