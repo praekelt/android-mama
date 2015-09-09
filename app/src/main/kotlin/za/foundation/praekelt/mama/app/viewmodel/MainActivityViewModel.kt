@@ -38,10 +38,7 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
     var fm: FragmentManager?
     var app: App
     @Bindable var vp: ViewPager? = null
-    @Bindable var categories: ObservableArrayList<Category>
-        set(cat) {
-            $categories = cat
-        }
+    @Bindable var categories: ObservableArrayList<Category> = ObservableArrayList()
 
     companion object{
         val TAG: String = "MainActivityViewModel"
@@ -50,9 +47,8 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
     init {
         println("init MAVM")
         fm = mainActivity.getSupportFragmentManager()
-        app = act!!.get().appComp().app()
+        app = mainActivity.appComp().app()
         repoObs = createRepoObservable(getNetworkObservable(), createUCDService())
-        $categories = ObservableArrayList()
 
         repoObs.doOnNext{ refreshCategories() }
                 .doOnNext { Observable.interval(500, TimeUnit.MILLISECONDS).toBlocking().first() }
