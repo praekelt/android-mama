@@ -14,10 +14,7 @@ import za.foundation.praekelt.mama.app.viewmodel.BaseActivityViewModel
 import za.foundation.praekelt.mama.inject.component.ApplicationComponent
 import za.foundation.praekelt.mama.inject.component.DaggerApplicationComponent
 import za.foundation.praekelt.mama.inject.module.ApplicationModule
-import za.foundation.praekelt.mama.util.otto.ActionPost
 import za.foundation.praekelt.mama.util.otto.ActivityViewModelPost
-import za.foundation.praekelt.mama.util.otto.FunctionPost
-import za.foundation.praekelt.mama.util.otto.ObservablePost
 import java.util.HashMap
 
 /**
