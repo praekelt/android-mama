@@ -27,6 +27,7 @@ import za.foundation.praekelt.mama.util.otto.ActivityViewModelPost
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 import za.foundation.praekelt.mama.util.Constants as _C
+import kotlinx.android.synthetic.include_main_activity_view_pager.*
 
 /**
  * ViewModel for MainActivity
@@ -67,7 +68,7 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
         info("start attach activity")
         super<BaseActivityViewModel>.onAttachActivity(activity)
         refreshCategories()
-        vp = act?.get()?.viewPager
+        vp = act?.get()?.viewpager
         fm = act?.get()?.getSupportFragmentManager()
         notifyPropertyChanged(BR.vp)
         info("end attach activity")
