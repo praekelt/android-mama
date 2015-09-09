@@ -1,6 +1,5 @@
 package za.foundation.praekelt.mama.app.viewmodel
 
-//import za.foundation.praekelt.mama.inject.component.MainActivityViewModelComponent
 import android.content.Context
 import android.databinding.Bindable
 import android.databinding.ObservableArrayList
