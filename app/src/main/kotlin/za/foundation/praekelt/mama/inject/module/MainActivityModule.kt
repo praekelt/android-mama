@@ -2,7 +2,6 @@ package za.foundation.praekelt.mama.inject.module
 
 import android.app.Activity
 import android.content.Context
-import android.support.design.widget.NavigationView
 import dagger.Module
 import dagger.Provides
 import org.jetbrains.anko.AnkoLogger
@@ -31,20 +30,9 @@ class MainActivityModule(val activity: MainActivity) : AnkoLogger {
 
     Provides
     ActivityScope
-    fun provideNav(): NavigationView {
-        activity.navigationView.setNavigationItemSelectedListener {
-            menuItem ->
-            menuItem.setChecked(true)
-            activity.mDrawerLayout.closeDrawers()
-            return@setNavigationItemSelectedListener true
-        }
-        return activity.navigationView
-    }
-
-    Provides
-    ActivityScope
     fun ProvideViewModel(): MainActivityViewModel {
-        val cached: BaseActivityViewModel<out Activity>? = activity.appComp().app().getCachedViewModel(MainActivityViewModel.TAG)
+        val cached: BaseActivityViewModel<out Activity>? = activity.appComp().app()
+                .getCachedViewModel(MainActivityViewModel.TAG)
         return if(cached != null)
             cached as MainActivityViewModel
         else
