@@ -16,7 +16,7 @@ import za.foundation.praekelt.mama.api.rest.model.Repo
 import za.foundation.praekelt.mama.app.App
 import za.foundation.praekelt.mama.app.CategoryPageAdapter
 import za.foundation.praekelt.mama.app.activity.MainActivity
-import za.foundation.praekelt.mama.inject.module.DaggerMainActivityViewModelComponent
+import za.foundation.praekelt.mama.inject.component.DaggerMainActivityViewModelComponent
 import za.foundation.praekelt.mama.inject.component.MainActivityViewModelComponent
 import za.foundation.praekelt.mama.inject.module.MainActivityViewModelModule
 import za.foundation.praekelt.mama.util.otto.ViewModelPost
