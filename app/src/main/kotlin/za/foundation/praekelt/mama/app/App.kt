@@ -11,10 +11,11 @@ import rx.Observable
 import rx.functions.Action
 import rx.functions.Function
 import za.foundation.praekelt.mama.app.viewmodel.BaseActivityViewModel
+import za.foundation.praekelt.mama.app.viewmodel.BaseViewModel
 import za.foundation.praekelt.mama.inject.component.ApplicationComponent
 import za.foundation.praekelt.mama.inject.component.DaggerApplicationComponent
 import za.foundation.praekelt.mama.inject.module.ApplicationModule
-import za.foundation.praekelt.mama.util.otto.ActivityViewModelPost
+import za.foundation.praekelt.mama.util.otto.ViewModelPost
 import java.util.HashMap
 
 /**
@@ -24,14 +25,14 @@ import java.util.HashMap
 
 class App : Application(), AnkoLogger {
     val bus: Bus
-    val viewModels: MutableMap<String, BaseActivityViewModel<out Activity>>
+    val viewModels: MutableMap<String, BaseViewModel>
     val observables: MutableMap<String, List<Observable<out Any>>>
     val functions: MutableMap<String, List<Function>>
     val actions: MutableMap<String, List<Action>>
 
     init {
         bus = Bus()
-        viewModels = HashMap<String, BaseActivityViewModel<out Activity>>()
+        viewModels = HashMap<String, BaseViewModel>()
         observables = HashMap<String, List<Observable<out Any>>>()
         functions = HashMap<String, List<Function>>()
         actions = HashMap<String, List<Action>>()
@@ -50,11 +51,11 @@ class App : Application(), AnkoLogger {
     }
 
     @Subscribe
-    fun saveActivityViewModel(pair: ActivityViewModelPost): Unit{
+    fun saveActivityViewModel(pair: ViewModelPost): Unit{
         viewModels.put(pair.first, pair.second)
     }
 
-    fun getCachedViewModel(id: String): BaseActivityViewModel<out Activity>? {
+    fun getCachedViewModel(id: String): BaseViewModel? {
         if (viewModels.contains(id)) println("found cached view model") else println("no cached view model")
         return viewModels.remove(id)
     }
