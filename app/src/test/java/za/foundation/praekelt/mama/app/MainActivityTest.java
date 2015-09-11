@@ -13,7 +13,6 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
 import za.foundation.praekelt.mama.BuildConfig;
-import za.foundation.praekelt.mama.api.rest.RestPackage;
 import za.foundation.praekelt.mama.app.activity.MainActivity;
 import za.foundation.praekelt.mama.util.Constants;
 
@@ -40,7 +39,7 @@ public class MainActivityTest {
         String commit = defaultSharedPreferences
                 .getString(Constants.SHARED_PREFS_COMMIT, defaultCommit);
 
-        activityController.get().setUcdService(RestPackage.createTestUCDService(RestPackage.createUCDServiceGson()));
+//        activityController.get().setUcdService(RestPackage.createTestUCDService(RestPackage.createUCDServiceGson()));
         assertThat(commit).isEqualTo(defaultCommit);
 
         activityController.resume();
