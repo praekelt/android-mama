@@ -4,14 +4,8 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
-import android.util.Log
-import android.view.ViewGroup
-import com.raizlabs.android.dbflow.sql.builder.Condition
-import com.raizlabs.android.dbflow.sql.language.Select
-import rx.Observable
 import za.foundation.praekelt.mama.R
 import za.foundation.praekelt.mama.api.model.Category
-import za.foundation.praekelt.mama.api.model.Category_Table
 import za.foundation.praekelt.mama.app.fragment.CategoryListFragment
 import za.foundation.praekelt.mama.app.fragment.EmptyListFragment
 import za.foundation.praekelt.mama.util.CategoryNameComparator
@@ -35,7 +29,7 @@ class CategoryPageAdapter(val fm: FragmentManager, val locale: String,
 
     init {
         println("cat size ${categories.size()}")
-        $categories = categories
+        $categories = sortList(categories)
     }
 
     override fun getCount(): Int {
