@@ -43,9 +43,9 @@ fun createUCDServiceGson(): Gson{
 
 fun createUCDService(gson: Gson = createUCDServiceGson()): UCDService{
     return if(!loadTestService) {
-        createRealUCDService()
+        createRealUCDService(gson)
     }else {
-        createTestUCDService()
+        createTestUCDService(gson)
     }
 }
 
