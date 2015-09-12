@@ -71,7 +71,7 @@ public class MainActivityViewModelModule {
                 .doOnNext(commit -> Log.i(TAG, "repo exists, checking for update"))
                 .flatMap(commit -> ucdService.getRepoStatus())
                 .filter(repoStatus -> !repoStatus.getCommit().equals(""))
-                .filter(repoStatus -> SharedPrefsUtil.INSTANCE$
+                .filter(repoStatus -> !SharedPrefsUtil.INSTANCE$
                         .getCommitFromSharedPrefs(ctx).equals(repoStatus.getCommit()))
                 .map(repoStatus -> SharedPrefsUtil.INSTANCE$.getCommitFromSharedPrefs(ctx))
                 .doOnNext(commit -> Log.i(TAG, "getting update"))
