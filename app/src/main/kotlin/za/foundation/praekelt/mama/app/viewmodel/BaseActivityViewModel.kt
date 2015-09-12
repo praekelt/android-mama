@@ -15,7 +15,7 @@ abstract class BaseActivityViewModel<T: Activity>(act: T): BaseViewModel(){
     }
 
     override fun onDestroy() {
-        super.onCreate()
+        super.onDestroy()
         act?.clear()
         act = null
     }
