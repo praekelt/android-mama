@@ -9,6 +9,7 @@ import retrofit.client.Request
 import retrofit.client.Response
 import retrofit.converter.GsonConverter
 import retrofit.mime.TypedByteArray
+import za.foundation.praekelt.mama.BuildConfig
 import za.foundation.praekelt.mama.api.rest.adapter.RepoAdapter
 import za.foundation.praekelt.mama.api.rest.adapter.RepoDiffAdapter
 import za.foundation.praekelt.mama.api.rest.adapter.RepoPullAdapter
@@ -17,15 +18,20 @@ import za.foundation.praekelt.mama.api.rest.model.Repo
 import za.foundation.praekelt.mama.api.rest.model.RepoDiff
 import za.foundation.praekelt.mama.api.rest.model.RepoPull
 import za.foundation.praekelt.mama.api.rest.model.RepoStatus
-import za.foundation.praekelt.mama.util.Constants as _C
 import java.io.File
 import java.util.Collections
-import kotlin.text.Regex
+import za.foundation.praekelt.mama.util.Constants as _C
 
 /**
  * Utils for the rest package
  */
 
+//This value should only be accessible on debug builds
+var loadTestService = false;
+    set(newVal){
+        if(BuildConfig.DEBUG)
+            $loadTestService = newVal
+    }
 fun createUCDServiceGson(): Gson{
     return GsonBuilder()
             .registerTypeAdapter(javaClass<RepoStatus>(), RepoStatusAdapter())
@@ -36,12 +42,19 @@ fun createUCDServiceGson(): Gson{
 }
 
 fun createUCDService(gson: Gson = createUCDServiceGson()): UCDService{
-    val restAdapter: RestAdapter = RestAdapter.Builder()
+    return if(!loadTestService) {
+        createRealUCDService()
+    }else {
+        createTestUCDService()
+    }
+}
+
+fun createRealUCDService(gson: Gson = createUCDServiceGson()): UCDService{
+    return RestAdapter.Builder()
             .setEndpoint(_C.BASE_URL)
             .setConverter(GsonConverter(gson))
             .build()
-
-    return restAdapter.create(javaClass<UCDService>())
+            .create(javaClass<UCDService>());
 }
 
 internal fun createTestUCDService(gson: Gson = createUCDServiceGson()): UCDService {
