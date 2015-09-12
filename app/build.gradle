@@ -26,6 +26,7 @@ buildscript {
         assertjAndroidVersion = "1.0.0"
         junitVersion = "4.12"
         robolectricVersion = "3.0"
+        leakCanaryVersion = "1.3.1"
     }
     repositories {
         mavenCentral()
@@ -95,7 +96,8 @@ dependencies {
     compile "org.jetbrains.anko:anko:$ankoVersion"
     retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:$retrolambdaVersion"
 
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
+    debugCompile "com.squareup.leakcanary:leakcanary-android:1.3.1"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:1.3.1"
 
     //testing dependencies
     testCompile "junit:junit:$junitVersion"
@@ -118,8 +120,6 @@ kapt {
 }
 
 retrolambda {
-    jdk System.getenv("JAVA8_HOME")
-    oldJdk System.getenv("JAVA_HOME")
     javaVersion JavaVersion.VERSION_1_7
     jvmArgs "-noverify"
 }
