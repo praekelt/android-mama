@@ -14,7 +14,6 @@ import za.foundation.praekelt.mama.api.model.Category
 import za.foundation.praekelt.mama.api.model.Category_Table
 import za.foundation.praekelt.mama.api.rest.model.Repo
 import za.foundation.praekelt.mama.app.App
-import za.foundation.praekelt.mama.app.CategoryPageAdapter
 import za.foundation.praekelt.mama.app.activity.MainActivity
 import za.foundation.praekelt.mama.inject.component.DaggerMainActivityViewModelComponent
 import za.foundation.praekelt.mama.inject.component.MainActivityViewModelComponent
@@ -34,9 +33,8 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
     val viewModelComp: MainActivityViewModelComponent by Delegates.lazy { getViewModelComponent() }
     var repoObs: Observable<Repo> by Delegates.notNull()
         @Inject set
-    var fm: FragmentManager?
+    var fm: FragmentManager? = null
     var app: App
-    var adapter: CategoryPageAdapter? = null
     @Bindable var vp: ViewPager? = null
     @Bindable var categories: ObservableArrayList<Category> = ObservableArrayList()
 
@@ -45,20 +43,17 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
     }
 
     init {
-        println("init MAVM")
-        fm = mainActivity.getSupportFragmentManager()
         app = mainActivity.appComp().app()
+        viewModelComp.inject(this);
+        initRepoObs()
     }
 
-    override fun onCreate() {
-        super<BaseActivityViewModel>.onCreate()
-        viewModelComp.inject(this);
+    fun initRepoObs(): Unit{
         repoObs.doOnNext{ refreshCategories() }
                 .doOnNext { Observable.interval(500, TimeUnit.MILLISECONDS).toBlocking().first() }
                 .subscribe(
-                { repo -> info("repo received")
-                    notifyPropertyChanged(BR.vp) },
-                { err -> info("error getting/updating repo") })
+                        { repo -> notifyPropertyChanged(BR.vp) },
+                        { err -> info("error getting/updating repo") })
     }
 
     override fun onAttachActivity(activity: MainActivity) {
