@@ -1,0 +1,15 @@
+language: android
+jdk: oraclejdk8
+sudo: required
+
+android:
+  components:
+    - platform-tools
+    - tools
+    - build-tools-23.0.1
+    - android-23
+    - extra-android-m2repository
+    - extra-android-support
+
+script:
+    - ./gradlew clean test
