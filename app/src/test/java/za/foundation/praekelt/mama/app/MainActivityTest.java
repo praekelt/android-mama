@@ -18,6 +18,7 @@ import org.robolectric.util.ActivityController;
 import java.lang.reflect.Field;
 
 import za.foundation.praekelt.mama.BuildConfig;
+import za.foundation.praekelt.mama.api.rest.RestPackage;
 import za.foundation.praekelt.mama.app.activity.MainActivity;
 import za.foundation.praekelt.mama.util.Constants;
 
@@ -33,6 +34,7 @@ public class MainActivityTest {
     @Before
     public void setUp(){
         activityController = Robolectric.buildActivity(MainActivity.class);
+        RestPackage.setLoadTestService(true);
     }
 
     @After
