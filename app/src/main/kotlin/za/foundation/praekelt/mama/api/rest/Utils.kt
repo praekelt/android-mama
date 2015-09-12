@@ -42,11 +42,10 @@ fun createUCDServiceGson(): Gson{
 }
 
 fun createUCDService(gson: Gson = createUCDServiceGson()): UCDService{
-    return if(!loadTestService) {
+    return if(!loadTestService)
         createRealUCDService(gson)
-    }else {
+    else
         createTestUCDService(gson)
-    }
 }
 
 fun createRealUCDService(gson: Gson = createUCDServiceGson()): UCDService{

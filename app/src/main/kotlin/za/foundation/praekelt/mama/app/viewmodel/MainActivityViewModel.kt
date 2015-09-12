@@ -63,7 +63,6 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
         vp = act?.get()?.viewpager
         fm = act?.get()?.getSupportFragmentManager()
         notifyPropertyChanged(BR.vp)
-        info("end attach activity $vp vs ${act?.get()?.viewpager}")
     }
 
     override fun onDestroy() {
