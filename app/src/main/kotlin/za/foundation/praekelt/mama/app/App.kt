@@ -42,7 +42,9 @@ class App : Application(), AnkoLogger {
         super<Application>.onCreate()
         FlowManager.init(this)
         bus.register(this)
-        LeakCanary.install(this)
+        try {
+            LeakCanary.install(this)
+        }catch(e: Exception){}
     }
 
     fun getApplicationComponent(): ApplicationComponent {
