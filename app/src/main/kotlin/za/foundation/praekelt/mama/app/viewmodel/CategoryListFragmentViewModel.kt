@@ -24,18 +24,9 @@ public class CategoryListFragmentViewModel(frag: CategoryListFragment) :
     var pages: ObservableArrayList<Page> = ObservableArrayList()
     var categoryUuid: String = ""
     var locale: String = ""
-    var position: Int = 0
-    var offset: Int = 0
 
     companion object {
         val TAG: String = "CategoryListFragmentViewModel"
-    }
-
-    init {
-
-        //        (layoutManager as LinearLayoutManager).scrollToPositionWithOffset(position, offset)
-        //        categoryUuid = frag.uuid
-        //        info("uuid => ${categoryUuid}")
     }
 
     override fun onAttachFragment(frag: CategoryListFragment) {
@@ -43,10 +34,6 @@ public class CategoryListFragmentViewModel(frag: CategoryListFragment) :
         locale = SharedPrefsUtil.getLocale(frag.ctx)
         layoutManager = LinearLayoutManager(frag.ctx)
         categoryUuid = frag.uuid
-        position = frag.position
-        offset = frag.offset
-        //        info("$categoryUuid VM pos"+position)
-        //        info("$categoryUuid VM off"+offset)
         refreshList()
     }
 
@@ -58,12 +45,10 @@ public class CategoryListFragmentViewModel(frag: CategoryListFragment) :
     }
 
     fun refreshList(): Unit {
-        //        info("refreshing list for cat")
         pages.clear()
         pages.addAll(Select().from(javaClass<Page>())
                 .where(Condition.column(Page_Table.PRIMARYCATEGORYID).`is`(categoryUuid))
                 .and(Condition.column(Page_Table.LOCALEID).`is`(locale))
                 .and(Condition.column(Page_Table.PUBLISHED).`is`(true)).queryList())
-        //        info("pages length ${pages.size()}")
     }
 }

@@ -22,15 +22,11 @@ class CategoryListFragment(var uuid: String = "", var locale: String = "") : Fra
     private object argsKeys {
         val uuidKey: String = "uuid"
         val localeKey: String = "locale"
-        val positionKey = "position"
-        val offsetKey = "offset"
     }
 
     val fragComp: CategoryListFragmentComponent by Delegates.lazy { getFragmentComponent() }
     var viewModel: CategoryListFragmentViewModel by Delegates.notNull()
         @Inject set
-    var position: Int = 0;
-    var offset: Int = 0;
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -43,8 +39,6 @@ class CategoryListFragment(var uuid: String = "", var locale: String = "") : Fra
                     when (key) {
                         argsKeys.uuidKey -> uuid = savedInstanceState!!.getString(key)
                         argsKeys.localeKey -> locale = savedInstanceState!!.getString(key)
-                        argsKeys.positionKey -> position = savedInstanceState!!.getInt(key)
-                        argsKeys.offsetKey -> offset = savedInstanceState!!.getInt(key)
                     }
                 }
         val bind: FragmentCategoryListBinding =
