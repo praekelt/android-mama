@@ -27,6 +27,7 @@ buildscript {
         junitVersion = "4.12"
         robolectricVersion = "3.0"
         leakCanaryVersion = "1.3.1"
+        espressoVersion = "2.2"
     }
     repositories {
         mavenCentral()
@@ -49,6 +50,8 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
+        testApplicationId "za.foundation.praekelt.mama.test"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -108,6 +111,26 @@ dependencies {
         exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
+
+    //Connected tests dependencies
+    androidTestCompile ("com.android.support.test:runner:0.3"){
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestCompile ("com.android.support.test:rules:0.3"){
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestCompile ("com.android.support.test.espresso:espresso-core:$espressoVersion"){
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestCompile("com.squareup.assertj:assertj-android:$assertjAndroidVersion") {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestCompile("com.android.support.test.espresso:espresso-contrib:$espressoVersion") {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'appcompat'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude module: 'recyclerview-v7'
+    }
 }
 repositories {
     mavenCentral()
@@ -122,4 +145,21 @@ kapt {
 retrolambda {
     javaVersion JavaVersion.VERSION_1_7
     jvmArgs "-noverify"
+}
+
+// Recompiles the instrumentation test apk and installs it on device
+task recompileInstallInstrumentTest (dependsOn:['assembleAndroidTest', 'installDebugAndroidTest'])
+
+// Recompiles instrumentation test apk installs and runs all tests
+task recompileRunInstrumentationTest (type: Exec, dependsOn:['recompileInstallInstrumentTest']){
+    commandLine "${android.getSdkDirectory().getAbsolutePath()}/platform-tools/adb",
+            'shell', 'am', 'instrument', '-w',
+            'za.foundation.praekelt.mama.test/android.support.test.runner.AndroidJUnitRunner'
+}
+
+// Runs instrumentation test only
+task runInstrumentationTest(type: Exec){
+    commandLine "${android.getSdkDirectory().getAbsolutePath()}/platform-tools/adb",
+            'shell', 'am', 'instrument', '-w',
+            'za.foundation.praekelt.mama.test/android.support.test.runner.AndroidJUnitRunner'
 }
