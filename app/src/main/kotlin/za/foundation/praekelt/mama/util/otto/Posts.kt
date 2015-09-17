@@ -1,7 +1,6 @@
 package za.foundation.praekelt.mama.util.otto
 
-import android.app.Activity
-import za.foundation.praekelt.mama.app.viewmodel.BaseActivityViewModel
+import za.foundation.praekelt.mama.api.model.Page
 import za.foundation.praekelt.mama.app.viewmodel.BaseViewModel
 
 /**
@@ -9,5 +8,8 @@ import za.foundation.praekelt.mama.app.viewmodel.BaseViewModel
  */
 
 open data class RxPost<T>(final val first: String, final val second: T)
-data class ViewModelPost(first: String, second: BaseViewModel):
+
+data class ViewModelPost(first: String, second: BaseViewModel) :
         RxPost<BaseViewModel>(first, second)
+
+data class PageItemClickedPost(val pageUuid: String)

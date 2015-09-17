@@ -11,6 +11,7 @@ import za.foundation.praekelt.mama.databinding.CategoryListItemBinding
 import za.foundation.praekelt.mama.util.OrderBy
 import za.foundation.praekelt.mama.util.PageNameComparator
 import za.foundation.praekelt.mama.util.PagePositionComparator
+import za.foundation.praekelt.mama.util.otto.PageItemClickedPost
 import java.util.ArrayList
 
 /**
@@ -38,6 +39,10 @@ class CategoryListAdapter(var orderBy: OrderBy = OrderBy.POSITION,
     override fun onBindViewHolder(holder: ViewHolder?, pos: Int) {
         holder!!
         holder.binding.setPage(pages[pos])
+        holder.binding.getRoot().setOnClickListener{v ->
+            (v.getContext().getApplicationContext() as App).bus.post(
+                    PageItemClickedPost(pages[pos].getUuid()))
+        }
     }
 
     inner class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
