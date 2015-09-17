@@ -4,14 +4,8 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
-import android.util.Log
-import android.view.ViewGroup
-import com.raizlabs.android.dbflow.sql.builder.Condition
-import com.raizlabs.android.dbflow.sql.language.Select
-import rx.Observable
 import za.foundation.praekelt.mama.R
 import za.foundation.praekelt.mama.api.model.Category
-import za.foundation.praekelt.mama.api.model.Category_Table
 import za.foundation.praekelt.mama.app.fragment.CategoryListFragment
 import za.foundation.praekelt.mama.app.fragment.EmptyListFragment
 import za.foundation.praekelt.mama.util.CategoryNameComparator
@@ -24,12 +18,18 @@ import java.util.ArrayList
  * @see za.foundation.praekelt.mama.app.activity.MainActivity
  */
 class CategoryPageAdapter(val fm: FragmentManager, val locale: String,
-                          var orderBy: OrderBy = OrderBy.POSITION) :
+                          var orderBy: OrderBy = OrderBy.POSITION,
+                          categories: MutableList<Category> = ArrayList<Category>()) :
         FragmentStatePagerAdapter(fm) {
-    var categories: MutableList<Category> = ArrayList<Category>()
+    var categories: MutableList<Category>
+        set(cats){
+            $categories = cats
+            notifyDataSetChanged()
+        }
 
     init {
-        refreshCategories().subscribe { notifyDataSetChanged() }
+        println("cat size ${categories.size()}")
+        $categories = sortList(categories)
     }
 
     override fun getCount(): Int {
@@ -49,25 +49,6 @@ class CategoryPageAdapter(val fm: FragmentManager, val locale: String,
             categories[position].getTitle()
         else
             null
-    }
-
-    private fun refreshCategories(): Observable<Boolean> {
-        return Observable.just(Select())
-                .map { select ->
-                    select.from(javaClass<Category>())
-                            .where(Condition.column(Category_Table.FEATUREDINNAVBAR).`is`(true))
-                            .and(Condition.column(Category_Table.LOCALEID).`is`(locale)).queryList()}
-                .filter { list -> list != null }
-                .map { list -> sortList(list) }
-                .map { list ->
-                    categories = list
-                    Log.i("CPA", "list size = ${categories.size()}")
-                    return@map categories.isNotEmpty()
-                }
-    }
-
-    fun refresh(): Observable<Boolean> {
-        return refreshCategories()
     }
 
     fun sortList(catList: MutableList<Category>): MutableList<Category> {

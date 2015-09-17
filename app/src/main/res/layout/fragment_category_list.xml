@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rv_category_list"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/fragment_cardview_horizontal_margin">
-</android.support.v7.widget.RecyclerView>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="categoryListVM"
+            type="za.foundation.praekelt.mama.app.viewmodel.CategoryListFragmentViewModel"/>
+    </data>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_category_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/fragment_cardview_horizontal_margin"
+        app:layoutManager="@{categoryListVM.layoutManager}"
+        app:pages="@{categoryListVM.pages}">
+    </android.support.v7.widget.RecyclerView>
+</layout>

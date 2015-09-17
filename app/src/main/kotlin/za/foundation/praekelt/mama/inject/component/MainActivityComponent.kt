@@ -13,10 +13,4 @@ public interface MainActivityComponent {
     fun inject(activity: MainActivity): Unit
 
     fun bus(): Bus
-
-    fun currentCommitFunc(): MainActivityModule.CurrentCommitFunc
-
-    fun saveCommitAction(): MainActivityModule.SaveCommitAction
-
-    fun tabLayout(): TabLayout
 }

@@ -1,8 +1,5 @@
 package za.foundation.praekelt.mama.app.fragment
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes

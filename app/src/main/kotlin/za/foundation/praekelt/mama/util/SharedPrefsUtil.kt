@@ -12,4 +12,9 @@ public object SharedPrefsUtil {
     fun saveCommitToSharedPrefs(ctx: Context, commit: String) {
         ctx.defaultSharedPreferences.edit().putString(_C.SHARED_PREFS_COMMIT, commit).apply()
     }
+
+    fun getLocale(ctx: Context): String {
+        return ctx.defaultSharedPreferences
+                .getString(_C.SHARED_PREFS_LOCALE, _C.SHARED_PREFS_LOCALE_DEFAULT)
+    }
 }

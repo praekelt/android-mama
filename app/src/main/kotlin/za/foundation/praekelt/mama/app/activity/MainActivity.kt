@@ -1,11 +1,8 @@
 package za.foundation.praekelt.mama.app.activity
 
+import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
-import android.support.design.widget.TabLayout
-import android.support.v4.view.ViewPager
-import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
@@ -13,25 +10,16 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.activity_main.drawer_layout
 import kotlinx.android.synthetic.activity_main.nav_view
 import kotlinx.android.synthetic.include_main_activity_view_pager.simple_toolbar
-import kotlinx.android.synthetic.include_main_activity_view_pager.tabs
-import kotlinx.android.synthetic.include_main_activity_view_pager.viewpager
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.adapter
 import rx.Observable
-import rx.observers.Observers
-import rx.subscriptions.CompositeSubscription
 import za.foundation.praekelt.mama.R
-import za.foundation.praekelt.mama.api.rest.UCDService
-import za.foundation.praekelt.mama.api.rest.model.Repo
 import za.foundation.praekelt.mama.app.App
-import za.foundation.praekelt.mama.app.CategoryPageAdapter
+import za.foundation.praekelt.mama.app.viewmodel.MainActivityViewModel
+import za.foundation.praekelt.mama.databinding.ActivityMainBinding
 import za.foundation.praekelt.mama.inject.component.ApplicationComponent
 import za.foundation.praekelt.mama.inject.component.DaggerMainActivityComponent
 import za.foundation.praekelt.mama.inject.component.MainActivityComponent
 import za.foundation.praekelt.mama.inject.module.MainActivityModule
-import za.foundation.praekelt.mama.util.otto.ActionPost
-import za.foundation.praekelt.mama.util.otto.FunctionPost
-import za.foundation.praekelt.mama.util.otto.ObservablePost
 import javax.inject.Inject
 import kotlin.properties.Delegates
 import za.foundation.praekelt.mama.util.Constants as _C
@@ -50,26 +38,17 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         val fragmentPositionKey = "fragPosition"
     }
 
-    var ucdService: UCDService by Delegates.notNull()
-    var mDrawerLayout: DrawerLayout by Delegates.notNull()
-    var navigationView: NavigationView by Delegates.notNull()
-        @Inject set
-    var viewPager: ViewPager by Delegates.notNull()
-        @Inject set
-    var tabLayout: TabLayout by Delegates.notNull()
-        @Inject set
     var networkObs: Observable<Boolean> by Delegates.notNull()
         @Inject set
-    var repoObs: Observable<Repo> by Delegates.notNull()
+    var activityComp: MainActivityComponent by Delegates.notNull()
+    var viewModel: MainActivityViewModel by Delegates.notNull()
         @Inject set
-    val activityComp: MainActivityComponent by lazy { getActivityComponent() }
 
-
-    val subscriptions: CompositeSubscription = CompositeSubscription()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super<AppCompatActivity>.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding: ActivityMainBinding = DataBindingUtil.setContentView(this,
+                R.layout.activity_main)
 
         val toolbar: Toolbar = this.simple_toolbar
         setSupportActionBar(toolbar)
@@ -77,6 +56,13 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         val ab = getSupportActionBar()
         ab.setHomeAsUpIndicator(R.drawable.abc_ic_ab_back_mtrl_am_alpha)
         ab.setDisplayHomeAsUpEnabled(true)
+
+        this.nav_view.setNavigationItemSelectedListener {
+            menuItem ->
+            menuItem.setChecked(true)
+            this.drawer_layout.closeDrawers()
+            return@setNavigationItemSelectedListener true
+        }
 
         Observable.just(savedInstanceState)
                 .filter { it != null }
@@ -88,12 +74,10 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
                     }
                 }
 
-        mDrawerLayout = this.drawer_layout
-        navigationView = this.nav_view
-        viewPager = this.viewpager
-        tabLayout = this.tabs
+        activityComp = getActivityComponent()
         activityComp.inject(this)
-        viewPager.setCurrentItem(tabPosition)
+        viewModel.onAttachActivity(this)
+        binding.setMainActVM(viewModel)
     }
 
     override fun onResume() {
@@ -102,32 +86,15 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
 
         networkObs.filter { !it }
                 .subscribe { noInternetSnackBar() }
-
-        val sub = Observers.create<Any>(
-                { evt ->
-                    //Refresh adapter and updates the tabLayout is necessary
-                    (viewPager.getAdapter() as CategoryPageAdapter).refresh()
-                            .filter { it }
-                            .doOnNext { tabLayout.setupWithViewPager(viewPager) }
-                            .subscribe {
-                                (viewPager.getAdapter() as CategoryPageAdapter).notifyDataSetChanged()
-                            }
-                },
-                { err -> info("Error connecting to network ###=> ${err}") },
-                { -> info("complete") })
-
-        subscriptions.add(repoObs.subscribe(sub))
         println("end resuming")
     }
 
     override fun onPause() {
         super<AppCompatActivity>.onPause()
-        if (subscriptions.hasSubscriptions())
-            subscriptions.unsubscribe()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
-        outState?.putInt(argsKeys.tabPositionKey, tabLayout.getSelectedTabPosition())
+        //outState?.putInt(argsKeys.tabPositionKey, tabLayout.getSelectedTabPosition())
         super<AppCompatActivity>.onSaveInstanceState(outState)
     }
 
@@ -151,7 +118,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         return super<AppCompatActivity>.onOptionsItemSelected(item)
     }
 
-    val appComp = fun(): ApplicationComponent {
+    fun appComp(): ApplicationComponent {
         return (getApplication() as App).getApplicationComponent()
     }
 
@@ -162,22 +129,16 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
                 .build()
     }
 
-    fun noInternetSnackBar() {
+    fun noInternetSnackBar(): Unit {
         Snackbar.make(
                 this.drawer_layout, getString(R.string.no_internet_connection),
                 Snackbar.LENGTH_LONG).show()
     }
 
     override fun onDestroy() {
-        //NB: Must set view pager to null otherwise will crash onResume
-        //if app is run for first time and is rotated while empty list
-        //notification is shown
-        viewPager.adapter = null
-        activityComp.currentCommitFunc().act = null
-        activityComp.saveCommitAction().act = null
-        activityComp.bus().post(ObservablePost(TAG, listOf(repoObs)))
-        activityComp.bus().post(FunctionPost(TAG, listOf(activityComp.currentCommitFunc())))
-        activityComp.bus().post(ActionPost(TAG, listOf(activityComp.saveCommitAction())))
+        info("start destroy")
         super<AppCompatActivity>.onDestroy()
+        viewModel.onDestroy()
+        info("end destroy")
     }
 }
