@@ -43,7 +43,7 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
     }
 
     init {
-        app = mainActivity.appComp().app()
+        app = mainActivity.activityComp.app()
         viewModelComp.inject(this);
         initRepoObs()
     }
@@ -68,7 +68,7 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
     override fun onDestroy() {
         fm = null
         vp = null
-        act?.get()?.appComp()?.bus()?.post(ViewModelPost(TAG, this))
+        act?.get()?.activityComp?.bus()?.post(ViewModelPost(TAG, this))
         super<BaseActivityViewModel>.onDestroy()
     }
 

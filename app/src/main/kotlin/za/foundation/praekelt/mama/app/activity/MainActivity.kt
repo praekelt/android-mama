@@ -118,18 +118,18 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         return super<AppCompatActivity>.onOptionsItemSelected(item)
     }
 
-    fun appComp(): ApplicationComponent {
+    private fun appComp(): ApplicationComponent {
         return (getApplication() as App).getApplicationComponent()
     }
 
-    fun getActivityComponent(): MainActivityComponent {
+    private fun getActivityComponent(): MainActivityComponent {
         return DaggerMainActivityComponent.builder()
                 .applicationComponent(appComp())
                 .mainActivityModule(MainActivityModule(this))
                 .build()
     }
 
-    fun noInternetSnackBar(): Unit {
+    private fun noInternetSnackBar(): Unit {
         Snackbar.make(
                 this.drawer_layout, getString(R.string.no_internet_connection),
                 Snackbar.LENGTH_LONG).show()
