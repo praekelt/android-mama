@@ -44,11 +44,15 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                 <TextView
+                    android:id="@+id/tv_page_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingEnd="8dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingEnd="16dp"
                     android:paddingStart="72dp"
-                    android:text="@{page.page.content}"/>
+                    android:text="@{page.page.content}"
+                    app:markdown_format="@{true}"/>
         </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.CoordinatorLayout>
 </layout>

@@ -34,9 +34,9 @@ public class DetailPageActivity(): AppCompatActivity(), AnkoLogger{
     override fun onCreate(savedInstanceState: Bundle?) {
         super<AppCompatActivity>.onCreate(savedInstanceState)
         activityComp.inject(this)
-        info("after inject ${pageUuid}")
         val binding: ActivityDetailPageBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail_page)
         binding.setPage(viewModel)
+        binding.executePendingBindings()
     }
 
     private fun getDetailPageActivityComponent(): DetailPageActivityComponent{
