@@ -23,7 +23,7 @@ class CategoryPageAdapter(val fm: FragmentManager, val locale: String,
         FragmentStatePagerAdapter(fm) {
     var categories: MutableList<Category>
         set(cats){
-            $categories = cats
+            field = cats
             notifyDataSetChanged()
         }
 

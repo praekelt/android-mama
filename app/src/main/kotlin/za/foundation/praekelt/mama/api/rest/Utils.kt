@@ -30,7 +30,7 @@ import za.foundation.praekelt.mama.util.Constants as _C
 var loadTestService = false;
     set(newVal){
         if(BuildConfig.DEBUG)
-            $loadTestService = newVal
+            field = newVal
     }
 fun createUCDServiceGson(): Gson{
     return GsonBuilder()
