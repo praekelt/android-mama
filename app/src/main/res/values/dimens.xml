@@ -8,4 +8,9 @@
     <dimen name="fragment_cardview_vertical_margin">8dp</dimen>
     <dimen name="card_view_margin">8dp</dimen>
     <dimen name="card_view_content_padding">8dp</dimen>
+    <dimen name="detail_page_leading_margin">24dp</dimen>
+    <dimen name="collapseTitlePaddingStartExpanded">32dp</dimen>
+    <dimen name="collapseTitlePaddingStartCollapsed">16dp</dimen>
+    <dimen name="collapseTitlePaddingEnd">8dp</dimen>
+    <dimen name="collapseTitlePaddingVertical">16dp</dimen>
 </resources>

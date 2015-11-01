@@ -7,10 +7,14 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.activity_main.drawer_layout
 import kotlinx.android.synthetic.activity_main.nav_view
 import kotlinx.android.synthetic.include_main_activity_view_pager.simple_toolbar
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.singleTop
+import org.jetbrains.anko.toast
 import rx.Observable
 import za.foundation.praekelt.mama.R
 import za.foundation.praekelt.mama.app.App
@@ -20,6 +24,7 @@ import za.foundation.praekelt.mama.inject.component.ApplicationComponent
 import za.foundation.praekelt.mama.inject.component.DaggerMainActivityComponent
 import za.foundation.praekelt.mama.inject.component.MainActivityComponent
 import za.foundation.praekelt.mama.inject.module.MainActivityModule
+import za.foundation.praekelt.mama.util.otto.PageItemClickedPost
 import javax.inject.Inject
 import kotlin.properties.Delegates
 import za.foundation.praekelt.mama.util.Constants as _C
@@ -86,10 +91,13 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
 
         networkObs.filter { !it }
                 .subscribe { noInternetSnackBar() }
+
+        activityComp.bus().register(this)
         println("end resuming")
     }
 
     override fun onPause() {
+        activityComp.bus().unregister(this)
         super<AppCompatActivity>.onPause()
     }
 
@@ -118,21 +126,28 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         return super<AppCompatActivity>.onOptionsItemSelected(item)
     }
 
-    fun appComp(): ApplicationComponent {
+    private fun appComp(): ApplicationComponent {
         return (getApplication() as App).getApplicationComponent()
     }
 
-    fun getActivityComponent(): MainActivityComponent {
+    private fun getActivityComponent(): MainActivityComponent {
         return DaggerMainActivityComponent.builder()
                 .applicationComponent(appComp())
                 .mainActivityModule(MainActivityModule(this))
                 .build()
     }
 
-    fun noInternetSnackBar(): Unit {
+    private fun noInternetSnackBar(): Unit {
         Snackbar.make(
                 this.drawer_layout, getString(R.string.no_internet_connection),
                 Snackbar.LENGTH_LONG).show()
+    }
+
+    Subscribe
+    fun pageClickedEvent(post: PageItemClickedPost){
+        toast("item clicked => ${post.pageUuid}")
+        startActivity(intentFor<DetailPageActivity>(
+                DetailPageActivity.argsKeys.uuidKey to post.pageUuid).singleTop())
     }
 
     override fun onDestroy() {

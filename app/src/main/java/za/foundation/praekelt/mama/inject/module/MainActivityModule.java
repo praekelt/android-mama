@@ -33,7 +33,8 @@ public class MainActivityModule {
     @Provides
     @ActivityScope
     public MainActivityViewModel ProvideViewModel(){
-        BaseViewModel cached = activity.appComp().app().getCachedViewModel(MainActivityViewModel.TAG);
+        BaseViewModel cached = activity.getActivityComp().app()
+                .getCachedViewModel(MainActivityViewModel.TAG);
         if (cached != null)
             return (MainActivityViewModel) cached;
         else
