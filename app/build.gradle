@@ -5,7 +5,7 @@ apply plugin: 'me.tatarka.retrolambda'
 
 buildscript {
     ext {
-        kotlin_version = '0.14.451'
+        kotlin_version = '1.0.0-beta-1038'
         androidAptVersion = "1.4"
         dbFlowVersion = "2.1.0"
         gsonVersion = "2.3"
@@ -19,7 +19,7 @@ buildscript {
         daggerVersion = "2.0.1"
         annotationApiVersion = "1.2"
         rxAndroidVersion = "0.25.0"
-        ankoVersion = "0.6.3-15s"
+        ankoVersion = "0.7.2"
         retrolambdaVersion = "2.0.6"
 
         //test dependency versions
@@ -98,7 +98,8 @@ dependencies {
     kapt "com.raizlabs.android:DBFlow-Compiler:$dbFlowVersion"
     compile "com.raizlabs.android:DBFlow-Core:$dbFlowVersion"
     compile "com.raizlabs.android:DBFlow:$dbFlowVersion"
-    compile "org.jetbrains.anko:anko:$ankoVersion"
+    compile "org.jetbrains.anko:anko-sdk15:$ankoVersion" // sdk19, sdk21, sdk23 are also available
+    compile "org.jetbrains.anko:anko-support-v4:$ankoVersion"
     retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:$retrolambdaVersion"
 
     debugCompile "com.squareup.leakcanary:leakcanary-android:1.3.1"
