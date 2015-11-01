@@ -1,3 +1,4 @@
+@file:JvmName("RestApiKt")
 package za.foundation.praekelt.mama.api.rest
 
 import android.net.Uri
@@ -25,7 +26,6 @@ import za.foundation.praekelt.mama.util.Constants as _C
 /**
  * Utils for the rest package
  */
-
 //This value should only be accessible on debug builds
 var loadTestService = false;
     set(newVal){

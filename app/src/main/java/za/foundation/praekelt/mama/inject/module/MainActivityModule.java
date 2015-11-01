@@ -3,7 +3,7 @@ package za.foundation.praekelt.mama.inject.module;
 
 import android.content.Context;
 
-import org.jetbrains.anko.AnkoPackage;
+import org.jetbrains.anko.Sdk15ServicesKt;
 
 import dagger.Module;
 import dagger.Provides;
@@ -43,7 +43,7 @@ public class MainActivityModule {
 
     @Provides
     public Observable<Boolean> provideNetworkObservable(){
-        return Observable.just(AnkoPackage.getConnectivityManager(activity).getActiveNetworkInfo())
+        return Observable.just(Sdk15ServicesKt.getConnectivityManager(activity).getActiveNetworkInfo())
                 .map(networkInfo -> (networkInfo != null && networkInfo.isConnected()));
     }
 }

@@ -13,7 +13,7 @@ import android.text.style.LeadingMarginSpan;
 import android.text.style.StyleSpan;
 import android.widget.TextView;
 
-import org.jetbrains.anko.AnkoPackage;
+import org.jetbrains.anko.DimensionsKt;
 
 import java.util.Iterator;
 
@@ -103,7 +103,7 @@ public class BindingUtils {
                 MatchResult result = resultIterator.next();
                 System.out.println("found match => " + result.getRange());
                 LeadingMarginSpan.Standard lms = new LeadingMarginSpan.Standard(
-                        AnkoPackage.dimen(view.getContext(), R.dimen.detail_page_leading_margin));
+                        DimensionsKt.dimen(view.getContext(), R.dimen.detail_page_leading_margin));
                 styleSpan = new StyleSpan(Typeface.BOLD);
                 formattedPage.setSpan(lms, start, start + str.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                 formattedPage.setSpan(styleSpan, start, start+2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
