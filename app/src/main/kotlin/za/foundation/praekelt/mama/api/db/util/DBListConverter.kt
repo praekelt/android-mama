@@ -7,7 +7,7 @@ import com.raizlabs.android.dbflow.converter.TypeConverter
  * and runtime class representation
  */
 
-com.raizlabs.android.dbflow.annotation.TypeConverter
+@com.raizlabs.android.dbflow.annotation.TypeConverter
 class DBListConverter: TypeConverter<String, DBStringList>() {
     override fun getDBValue(model: DBStringList?): String? {
         val sb:StringBuilder = StringBuilder()

@@ -8,8 +8,8 @@ import za.foundation.praekelt.mama.inject.scope.ActivityScope
 /**
  * Created by eduardokolomajr on 2015/09/14.
  */
-ActivityScope
-Component(modules = arrayOf(DetailPageActivityModule::class))
+@ActivityScope
+@Component(modules = arrayOf(DetailPageActivityModule::class))
 public interface DetailPageActivityComponent{
     fun inject(activity: DetailPageActivity): Unit
 }

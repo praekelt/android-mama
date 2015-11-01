@@ -9,10 +9,10 @@ import javax.inject.Scope
  * Dagger scopes
  */
 
-Scope
-Retention(RetentionPolicy.RUNTIME)
+@Scope
+@Retention(RetentionPolicy.RUNTIME)
 annotation public class ActivityScope
 
-Scope
-Retention(RetentionPolicy.RUNTIME)
+@Scope
+@Retention(RetentionPolicy.RUNTIME)
 annotation public class FragmentScope

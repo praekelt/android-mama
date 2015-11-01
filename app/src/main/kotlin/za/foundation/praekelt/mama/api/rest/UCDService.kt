@@ -14,15 +14,15 @@ import za.foundation.praekelt.mama.util.Constants as _C
  */
 
 interface UCDService{
-    GET(_C.REMOTE_STATUS_URL)
+    @GET(_C.REMOTE_STATUS_URL)
     fun getRepoStatus(): Observable<RepoStatus>
 
-    GET(_C.REMOTE_CLONE_URL)
+    @GET(_C.REMOTE_CLONE_URL)
     fun cloneRepo(): Observable<Repo>
 
-    GET(_C.REMOTE_DIFF_URL)
-    fun getRepoDiff(Path(_C.REST_COMMIT_STUB) commitId:String): Observable<RepoDiff>
+    @GET(_C.REMOTE_DIFF_URL)
+    fun getRepoDiff(@Path(_C.REST_COMMIT_STUB) commitId:String): Observable<RepoDiff>
 
-    GET(_C.REMOTE_PULL_URL)
-    fun pullRepo(Path(_C.REST_COMMIT_STUB) commitId:String): Observable<RepoPull>
+    @GET(_C.REMOTE_PULL_URL)
+    fun pullRepo(@Path(_C.REST_COMMIT_STUB) commitId:String): Observable<RepoPull>
 }

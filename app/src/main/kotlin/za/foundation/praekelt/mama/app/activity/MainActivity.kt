@@ -143,7 +143,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
                 Snackbar.LENGTH_LONG).show()
     }
 
-    Subscribe
+    @Subscribe
     fun pageClickedEvent(post: PageItemClickedPost){
         toast("item clicked => ${post.pageUuid}")
         startActivity(intentFor<DetailPageActivity>(
