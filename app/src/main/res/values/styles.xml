@@ -20,4 +20,15 @@
         <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
+    <style name="TextAppearance.DetailPageTitleExpanded" parent="TextAppearance.Design.CollapsingToolbar.Expanded"/>
+
+    <style name="DetailPageTitleExpanded">
+        <item name="android:paddingStart">@dimen/collapseTitlePaddingStartExpanded</item>
+        <item name="android:paddingEnd">@dimen/collapseTitlePaddingEnd</item>
+        <item name="android:paddingTop">@dimen/collapseTitlePaddingVertical</item>
+        <item name="android:paddingBottom">@dimen/collapseTitlePaddingVertical</item>
+        <item name="android:layout_gravity">bottom</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
 </resources>

@@ -68,9 +68,9 @@ public class BindingUtils {
         StyleSpan styleSpan;
         int count = 0;
         int changesThisLoop = 0;
-        MatchResult boldMatch;
         int boldStart = -1;
         int boldEnd = -1;
+        MatchResult boldMatch;
         for(String str : lines){
             if(count == 0 || (str.isEmpty() && count > 0)) {
                 ++count;

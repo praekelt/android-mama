@@ -22,10 +22,11 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapse_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:title="@{page.page.title}"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:titleEnabled="false">
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/simple_toolbar"
@@ -33,7 +34,16 @@
                     android:layout_height="?attr/actionBarSize"
                     android:background="?attr/colorPrimary"
                     app:layout_collapseMode="pin"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                </android.support.v7.widget.Toolbar>
+
+                <TextView
+                    android:id="@+id/tv_collapsing_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.DetailPageTitleExpanded"
+                    android:text="@{page.page.title}"
+                    style="@style/DetailPageTitleExpanded"/>
             </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>
 
@@ -43,16 +53,16 @@
             android:overScrollMode="always"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-                <TextView
-                    android:id="@+id/tv_page_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:paddingEnd="16dp"
-                    android:paddingStart="72dp"
-                    android:text="@{page.page.content}"
-                    app:markdown_format="@{true}"/>
+            <TextView
+                android:id="@+id/tv_page_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:paddingEnd="16dp"
+                android:paddingStart="72dp"
+                android:paddingTop="8dp"
+                android:text="@{page.page.content}"
+                app:markdown_format="@{true}"/>
         </android.support.v4.widget.NestedScrollView>
     </android.support.design.widget.CoordinatorLayout>
 </layout>
