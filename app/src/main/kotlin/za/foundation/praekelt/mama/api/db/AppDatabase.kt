@@ -9,6 +9,6 @@ import za.foundation.praekelt.mama.util.Constants as _C
 
 @Database(name = AppDatabase.NAME, version = AppDatabase.VERSION, generatedClassSeparator = "_")
 public object AppDatabase{
-    public val NAME: String = _C.REPO_NAME
-    public val VERSION: Int = 1
+    public const val NAME: String = _C.REPO_NAME
+    public const val VERSION: Int = 1
 }
