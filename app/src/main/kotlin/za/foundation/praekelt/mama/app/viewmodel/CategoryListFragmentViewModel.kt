@@ -32,7 +32,7 @@ public class CategoryListFragmentViewModel(frag: CategoryListFragment) :
     }
 
     override fun onAttachFragment(frag: CategoryListFragment) {
-        super<BaseFragmentViewModel>.onAttachFragment(frag)
+        super.onAttachFragment(frag)
         locale = SharedPrefsUtil.getLocale(frag.ctx)
         layoutManager = LinearLayoutManager(frag.ctx)
         categoryUuid = frag.uuid
@@ -41,9 +41,9 @@ public class CategoryListFragmentViewModel(frag: CategoryListFragment) :
 
     override fun onDestroy() {
         layoutManager = null
-        (fragment?.get()?.act?.getApplicationContext() as App).getApplicationComponent().bus()
+        (fragment?.get()?.act?.applicationContext as App).getApplicationComponent().bus()
                 .post(ViewModelPost(CategoryListFragmentViewModel.TAG + categoryUuid, this))
-        super<BaseFragmentViewModel>.onDestroy()
+        super.onDestroy()
     }
 
     fun refreshList(): Unit {

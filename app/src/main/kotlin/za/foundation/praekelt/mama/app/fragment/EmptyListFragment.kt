@@ -24,7 +24,7 @@ class EmptyListFragment(@StringRes var message: Int = 0, @DrawableRes var image:
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        super<Fragment>.onCreateView(inflater, container, savedInstanceState)
+        super.onCreateView(inflater, container, savedInstanceState)
         val view: View = inflater?.inflate(R.layout.fragment_empty_list, container, false)!!
         Observable.just(savedInstanceState)
             .filter{ it != null }
@@ -40,18 +40,18 @@ class EmptyListFragment(@StringRes var message: Int = 0, @DrawableRes var image:
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super<Fragment>.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, savedInstanceState)
         Log.i("ELF", "create view start")
         this.tv_empty_list.setText(message)
         Log.i("ELF", "create view end")
     }
 
     override fun onResume() {
-        super<Fragment>.onResume()
+        super.onResume()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
-        super<Fragment>.onSaveInstanceState(outState)
+        super.onSaveInstanceState(outState)
         outState?.putInt(argsKeys.messageKey, message)
         outState?.putInt(argsKeys.imageKey, image)
     }

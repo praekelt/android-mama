@@ -59,10 +59,10 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
 
     override fun onAttachActivity(activity: MainActivity) {
         info("start attach activity")
-        super<BaseActivityViewModel>.onAttachActivity(activity)
+        super.onAttachActivity(activity)
         refreshCategories()
         vp = act?.get()?.viewpager
-        fm = act?.get()?.getSupportFragmentManager()
+        fm = act?.get()?.supportFragmentManager
         notifyPropertyChanged(BR.vp)
     }
 
@@ -70,7 +70,7 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
         fm = null
         vp = null
         act?.get()?.activityComp?.bus()?.post(ViewModelPost(TAG, this))
-        super<BaseActivityViewModel>.onDestroy()
+        super.onDestroy()
     }
 
     fun refreshCategories(): Unit {

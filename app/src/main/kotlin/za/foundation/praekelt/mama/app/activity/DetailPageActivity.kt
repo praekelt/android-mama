@@ -34,14 +34,14 @@ public class DetailPageActivity() : AppCompatActivity(), Animator.AnimatorListen
 
     var pageUuid: String by Delegates.notNull()
         @Inject set
-    val activityComp: DetailPageActivityComponent by Delegates.lazy { getDetailPageActivityComponent() }
+    val activityComp: DetailPageActivityComponent by lazy { getDetailPageActivityComponent() }
     var viewModel: DetailPageActivityViewModel by Delegates.notNull()
         @Inject set
 
     val animSet: AnimatorSet = AnimatorSet()
-    private val textSizeAnimator: ValueAnimator by Delegates.lazy { createTitleTextSizeAnimator() }
-    private val textPaddingAnimator: ValueAnimator by Delegates.lazy { createTitleTextPaddingAnimator() }
-    val maxTitleHeight: Int by Delegates.lazy { this.tv_collapsing_title.height }
+    private val textSizeAnimator: ValueAnimator by lazy { createTitleTextSizeAnimator() }
+    private val textPaddingAnimator: ValueAnimator by lazy { createTitleTextPaddingAnimator() }
+    val maxTitleHeight: Int by lazy { this.tv_collapsing_title.height }
     var expandedPaddingStartSize: Int = 0
     var collapsedPaddingStartSize: Int = 0
     var expandedTextSize: Float = 0.0f
@@ -51,7 +51,7 @@ public class DetailPageActivity() : AppCompatActivity(), Animator.AnimatorListen
     var increasing:Boolean = true
     var animEnded: Boolean = true
     override fun onCreate(savedInstanceState: Bundle?) {
-        super<AppCompatActivity>.onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState)
         activityComp.inject(this)
         val binding: ActivityDetailPageBinding = DataBindingUtil.setContentView(this,
                 R.layout.activity_detail_page)
@@ -90,7 +90,7 @@ public class DetailPageActivity() : AppCompatActivity(), Animator.AnimatorListen
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super<AppCompatActivity>.onWindowFocusChanged(hasFocus)
+        super.onWindowFocusChanged(hasFocus)
         maxTitleHeight //lazy initilises value when layout is ready
     }
 

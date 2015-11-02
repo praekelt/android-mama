@@ -33,7 +33,7 @@ class CategoryListAdapter(var orderBy: OrderBy = OrderBy.POSITION,
     }
 
     override fun getItemCount(): Int {
-        return pages.size()
+        return pages.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder?, pos: Int) {
@@ -52,8 +52,8 @@ class CategoryListAdapter(var orderBy: OrderBy = OrderBy.POSITION,
     fun sortList(pageList: MutableList<Page>): MutableList<Page> {
         Log.i("CLA", "sorting by ${orderBy}")
         when (orderBy) {
-            OrderBy.POSITION -> return pageList.sortBy(PagePositionComparator()) as MutableList
-            OrderBy.NAME -> return pageList.sortBy(PageNameComparator()) as MutableList
+            OrderBy.POSITION -> return pageList.sortedWith(PagePositionComparator()) as MutableList
+            OrderBy.NAME -> return pageList.sortedWith(PageNameComparator()) as MutableList
             else -> return pageList
         }
     }

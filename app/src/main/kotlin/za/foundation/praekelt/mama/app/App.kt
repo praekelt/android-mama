@@ -39,7 +39,7 @@ class App : Application(), AnkoLogger {
     }
 
     override fun onCreate() {
-        super<Application>.onCreate()
+        super.onCreate()
         FlowManager.init(this)
         bus.register(this)
         try {

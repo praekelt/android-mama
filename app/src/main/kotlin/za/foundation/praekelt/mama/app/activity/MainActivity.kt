@@ -15,6 +15,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.singleTop
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.info
 import rx.Observable
 import za.foundation.praekelt.mama.R
 import za.foundation.praekelt.mama.app.App
@@ -51,7 +52,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super<AppCompatActivity>.onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState)
         val binding: ActivityMainBinding = DataBindingUtil.setContentView(this,
                 R.layout.activity_main)
 
@@ -86,7 +87,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     override fun onResume() {
-        super<AppCompatActivity>.onResume()
+        super.onResume()
         println("resuming")
 
         networkObs.filter { !it }
@@ -98,12 +99,12 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onPause() {
         activityComp.bus().unregister(this)
-        super<AppCompatActivity>.onPause()
+        super.onPause()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         //outState?.putInt(argsKeys.tabPositionKey, tabLayout.getSelectedTabPosition())
-        super<AppCompatActivity>.onSaveInstanceState(outState)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -123,7 +124,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
             return true
         }
 
-        return super<AppCompatActivity>.onOptionsItemSelected(item)
+        return super.onOptionsItemSelected(item)
     }
 
     private fun appComp(): ApplicationComponent {
@@ -152,8 +153,8 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onDestroy() {
         info("start destroy")
-        super<AppCompatActivity>.onDestroy()
         viewModel.onDestroy()
         info("end destroy")
+        super.onDestroy()
     }
 }
