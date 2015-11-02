@@ -1,8 +1,7 @@
 package za.foundation.praekelt.mama.inject.scope
 
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-import javax.inject.Qualifier
+import kotlin.annotation.Retention
+import kotlin.annotation.AnnotationRetention
 import javax.inject.Scope
 
 /**
@@ -10,9 +9,9 @@ import javax.inject.Scope
  */
 
 @Scope
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(AnnotationRetention.RUNTIME)
 annotation public class ActivityScope
 
 @Scope
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(AnnotationRetention.RUNTIME)
 annotation public class FragmentScope
