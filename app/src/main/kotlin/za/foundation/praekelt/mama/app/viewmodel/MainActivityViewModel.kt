@@ -40,7 +40,7 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
     @Bindable var categories: ObservableArrayList<Category> = ObservableArrayList()
 
     companion object{
-        val TAG: String = "MainActivityViewModel"
+        const val TAG: String = "MainActivityViewModel"
     }
 
     init {

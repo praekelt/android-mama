@@ -8,6 +8,8 @@ import com.raizlabs.android.dbflow.sql.language.Select
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.act
 import org.jetbrains.anko.ctx
+import org.jetbrains.anko.support.v4.act
+import org.jetbrains.anko.support.v4.ctx
 import za.foundation.praekelt.mama.api.model.Page
 import za.foundation.praekelt.mama.api.model.Page_Table
 import za.foundation.praekelt.mama.app.App
@@ -26,7 +28,7 @@ public class CategoryListFragmentViewModel(frag: CategoryListFragment) :
     var locale: String = ""
 
     companion object {
-        val TAG: String = "CategoryListFragmentViewModel"
+        const val TAG: String = "CategoryListFragmentViewModel"
     }
 
     override fun onAttachFragment(frag: CategoryListFragment) {

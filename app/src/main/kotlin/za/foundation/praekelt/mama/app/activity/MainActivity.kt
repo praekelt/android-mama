@@ -35,7 +35,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         private set
 
     companion object {
-        val TAG: String = "MainActivity"
+        const val TAG: String = "MainActivity"
     }
 
     private object argsKeys {

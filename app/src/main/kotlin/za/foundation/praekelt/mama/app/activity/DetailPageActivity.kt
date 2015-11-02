@@ -25,7 +25,7 @@ import kotlin.properties.Delegates
  */
 public class DetailPageActivity() : AppCompatActivity(), Animator.AnimatorListener, AnkoLogger {
     companion object {
-        val TAG: String = "DetailPAgeActivity"
+        const val TAG: String = "DetailPAgeActivity"
     }
 
     object argsKeys {
