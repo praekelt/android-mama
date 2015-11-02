@@ -53,8 +53,8 @@ class CategoryPageAdapter(val fm: FragmentManager, val locale: String,
 
     fun sortList(catList: MutableList<Category>): MutableList<Category> {
         when (orderBy) {
-            OrderBy.POSITION -> return catList.sortBy(CategoryPositionComparator()) as MutableList
-            OrderBy.NAME -> return catList.sortBy(CategoryNameComparator()) as MutableList
+            OrderBy.POSITION -> return catList.sortedWith(CategoryPositionComparator()) as MutableList
+            OrderBy.NAME -> return catList.sortedWith(CategoryNameComparator()) as MutableList
             else -> return catList
         }
     }
