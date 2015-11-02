@@ -48,7 +48,7 @@ public class CategoryListFragmentViewModel(frag: CategoryListFragment) :
 
     fun refreshList(): Unit {
         pages.clear()
-        pages.addAll(Select().from(javaClass<Page>())
+        pages.addAll(Select().from(Page::class.java)
                 .where(Condition.column(Page_Table.PRIMARYCATEGORYID).`is`(categoryUuid))
                 .and(Condition.column(Page_Table.LOCALEID).`is`(locale))
                 .and(Condition.column(Page_Table.PUBLISHED).`is`(true)).queryList())

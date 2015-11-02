@@ -75,7 +75,7 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
 
     fun refreshCategories(): Unit {
         categories.clear()
-        categories.addAll(Select().from(javaClass<Category>())
+        categories.addAll(Select().from(Category::class.java)
                 .where(Condition.column(Category_Table.FEATUREDINNAVBAR).`is`(true))
                 .and(Condition.column(Category_Table.LOCALEID).`is`(
                         _C.SHARED_PREFS_LOCALE_DEFAULT)).queryList())

@@ -34,10 +34,10 @@ var loadTestService = false;
     }
 fun createUCDServiceGson(): Gson{
     return GsonBuilder()
-            .registerTypeAdapter(javaClass<RepoStatus>(), RepoStatusAdapter())
-            .registerTypeAdapter(javaClass<Repo>(), RepoAdapter())
-            .registerTypeAdapter(javaClass<RepoDiff>(), RepoDiffAdapter())
-            .registerTypeAdapter(javaClass<RepoPull>(), RepoPullAdapter())
+            .registerTypeAdapter(RepoStatus::class.java, RepoStatusAdapter())
+            .registerTypeAdapter(Repo::class.java, RepoAdapter())
+            .registerTypeAdapter(RepoDiff::class.java, RepoDiffAdapter())
+            .registerTypeAdapter(RepoPull::class.java, RepoPullAdapter())
             .create()
 }
 
@@ -53,7 +53,7 @@ fun createRealUCDService(gson: Gson = createUCDServiceGson()): UCDService{
             .setEndpoint(_C.BASE_URL)
             .setConverter(GsonConverter(gson))
             .build()
-            .create(javaClass<UCDService>());
+            .create(UCDService::class.java);
 }
 
 internal fun createTestUCDService(gson: Gson = createUCDServiceGson()): UCDService {
@@ -63,7 +63,7 @@ internal fun createTestUCDService(gson: Gson = createUCDServiceGson()): UCDServi
             .setClient(TestHttpClient())
             .build()
 
-    return restAdapter.create(javaClass<UCDService>())
+    return restAdapter.create(UCDService::class.java)
 }
 
 class TestHttpClient: Client {

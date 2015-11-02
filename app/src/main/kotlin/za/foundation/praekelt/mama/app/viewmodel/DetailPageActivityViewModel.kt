@@ -17,7 +17,7 @@ public class DetailPageActivityViewModel(val pageUuid: String): BaseObservable()
     }
 
     fun retrievePage(): Page {
-        return Select().from(javaClass<Page>()).where(Condition.column(Page_Table.UUID)
+        return Select().from(Page::class.java).where(Condition.column(Page_Table.UUID)
                 .`is`(pageUuid)).querySingle()
     }
 }
