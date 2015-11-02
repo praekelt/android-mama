@@ -6,6 +6,7 @@ import com.raizlabs.android.dbflow.runtime.transaction.process.DeleteModelListTr
 import com.raizlabs.android.dbflow.runtime.transaction.process.ProcessModelInfo
 import com.raizlabs.android.dbflow.runtime.transaction.process.SaveModelTransaction
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 import za.foundation.praekelt.mama.api.model.Category
 import za.foundation.praekelt.mama.api.model.Localisation
 import za.foundation.praekelt.mama.api.model.Page

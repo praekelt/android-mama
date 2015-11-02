@@ -8,6 +8,7 @@ import com.raizlabs.android.dbflow.sql.builder.Condition
 import com.raizlabs.android.dbflow.sql.language.Select
 import kotlinx.android.synthetic.include_main_activity_view_pager.viewpager
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 import rx.Observable
 import za.foundation.praekelt.mama.BR
 import za.foundation.praekelt.mama.api.model.Category
