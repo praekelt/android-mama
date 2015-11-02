@@ -43,7 +43,9 @@ public class MainActivityTest {
             Field field = FlowManager.class.getDeclaredField("mDatabaseHolder");
             field.setAccessible(true);
             field.set(null, null);
-        } catch (IllegalAccessException | NoSuchFieldException e) {
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
     }
