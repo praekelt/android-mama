@@ -28,17 +28,17 @@ class CategoryPageAdapter(val fm: FragmentManager, val locale: String,
         }
 
     init {
-        println("cat size ${categories.size()}")
+        println("cat size ${categories.size}")
         $categories = sortList(categories)
     }
 
     override fun getCount(): Int {
-        return if (categories.isNotEmpty()) categories.size() else 1
+        return if (categories.isNotEmpty()) categories.size else 1
     }
 
     override fun getItem(position: Int): Fragment? {
         return if (categories.isNotEmpty())
-            CategoryListFragment(categories[position].getUuid(), locale)
+            CategoryListFragment(categories[position].uuid, locale)
         else {
             EmptyListFragment(R.string.empty_categories_message, R.drawable.ic_archive_accent_48dp)
         }
@@ -46,7 +46,7 @@ class CategoryPageAdapter(val fm: FragmentManager, val locale: String,
 
     override fun getPageTitle(position: Int): CharSequence? {
         return if (categories.isNotEmpty())
-            categories[position].getTitle()
+            categories[position].title
         else
             null
     }

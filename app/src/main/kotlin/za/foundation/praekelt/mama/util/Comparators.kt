@@ -26,14 +26,14 @@ interface  CategoryComparator: Comparator<Category>{
 class CategoryPositionComparator: CategoryComparator{
     override fun compare(p0: Category?, p1: Category?): Int {
         checkForNull(p0, p1)
-        return p0!!.getPosition().compareTo(p1!!.getPosition())
+        return p0!!.position.compareTo(p1!!.position)
     }
 }
 
 class CategoryNameComparator: CategoryComparator{
     override fun compare(p0: Category?, p1: Category?): Int {
         checkForNull(p0, p1)
-        return p0!!.getTitle().compareTo(p1!!.getTitle())
+        return p0!!.title.compareTo(p1!!.title)
     }
 
 }
@@ -51,13 +51,13 @@ interface PageComparator: Comparator<Page>{
 class PagePositionComparator: PageComparator{
     override fun compare(p0: Page?, p1: Page?): Int {
         checkForNull(p0, p1)
-        return p0!!.getPosition().compareTo(p1!!.getPosition())
+        return p0!!.position.compareTo(p1!!.position)
     }
 }
 
 class PageNameComparator: PageComparator{
     override fun compare(p0: Page?, p1: Page?): Int {
         checkForNull(p0, p1)
-        return p0!!.getTitle().compareTo(p1!!.getTitle())
+        return p0!!.title.compareTo(p1!!.title)
     }
 }

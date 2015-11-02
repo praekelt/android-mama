@@ -73,14 +73,14 @@ class TestHttpClient: Client {
         if (request == null)
             throw NullPointerException("request is null")
 
-        val uri: Uri = Uri.parse(request.getUrl())
+        val uri: Uri = Uri.parse(request.url)
         when{
-            uri.getPath().equals(_C.REMOTE_STATUS_URL) -> return returnStatusResponse(request)
-            uri.getPath().equals(_C.REMOTE_CLONE_URL) -> return returnCloneRepoResponse(request)
-            uri.getPath().contains(diffSubstring) -> return returnDiffRepoRequest(request)
-            uri.getPath().contains(pullSubstring) -> return returnPullRepoRequest(request)
+            uri.path.equals(_C.REMOTE_STATUS_URL) -> return returnStatusResponse(request)
+            uri.path.equals(_C.REMOTE_CLONE_URL) -> return returnCloneRepoResponse(request)
+            uri.path.contains(diffSubstring) -> return returnDiffRepoRequest(request)
+            uri.path.contains(pullSubstring) -> return returnPullRepoRequest(request)
             else -> {
-                return Response(request.getUrl(), 404, "Not found", Collections.emptyList(),
+                return Response(request.url, 404, "Not found", Collections.emptyList(),
                         TypedByteArray("application/json", "{}".toByteArray()))
             }
         }
@@ -88,25 +88,25 @@ class TestHttpClient: Client {
 
     fun returnStatusResponse(request: Request): Response{
         val status: String = File("src/test/testFiles/testStatus.json").readText()
-        return Response(request.getUrl(), 200, "OK",
+        return Response(request.url, 200, "OK",
                 Collections.emptyList(), TypedByteArray("application/json", status.toByteArray()))
     }
 
     fun returnCloneRepoResponse(request: Request): Response{
         val repo: String = File("src/test/testFiles/testRepo.json").readText()
-        return Response(request.getUrl(), 200, "OK",
+        return Response(request.url, 200, "OK",
                 Collections.emptyList(), TypedByteArray("application/json", repo.toByteArray()))
     }
 
     fun returnDiffRepoRequest(request: Request): Response{
         val status: String = File("src/test/testFiles/testDiff.json").readText()
-        return Response(request.getUrl(), 200, "OK",
+        return Response(request.url, 200, "OK",
                 Collections.emptyList(), TypedByteArray("application/json", status.toByteArray()))
     }
 
     fun returnPullRepoRequest(request: Request): Response{
         val status: String = File("src/test/testFiles/testPull.json").readText()
-        return Response(request.getUrl(), 200, "OK",
+        return Response(request.url, 200, "OK",
                 Collections.emptyList(), TypedByteArray("application/json", status.toByteArray()))
     }
 }

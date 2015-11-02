@@ -31,7 +31,7 @@ import za.foundation.praekelt.mama.util.Constants as _C
  */
 public class MainActivityViewModel(mainActivity: MainActivity) :
         BaseActivityViewModel<MainActivity>(mainActivity), AnkoLogger {
-    val viewModelComp: MainActivityViewModelComponent by Delegates.lazy { getViewModelComponent() }
+    val viewModelComp: MainActivityViewModelComponent by lazy(LazyThreadSafetyMode.NONE) { getViewModelComponent() }
     var repoObs: Observable<Repo> by Delegates.notNull()
         @Inject set
     var fm: FragmentManager? = null
