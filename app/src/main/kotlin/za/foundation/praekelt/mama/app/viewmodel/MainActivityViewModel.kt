@@ -9,6 +9,7 @@ import com.raizlabs.android.dbflow.sql.language.Select
 import kotlinx.android.synthetic.include_main_activity_view_pager.viewpager
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+import org.jetbrains.anko.warn
 import rx.Observable
 import za.foundation.praekelt.mama.BR
 import za.foundation.praekelt.mama.api.model.Category
@@ -54,7 +55,7 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
                 .doOnNext { Observable.interval(500, TimeUnit.MILLISECONDS).toBlocking().first() }
                 .subscribe(
                         { repo -> notifyPropertyChanged(BR.vp) },
-                        { err -> info("error getting/updating repo") })
+                        { err -> warn("error getting/updating repo") })
     }
 
     override fun onAttachActivity(activity: MainActivity) {
