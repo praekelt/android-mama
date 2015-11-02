@@ -59,7 +59,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         val toolbar: Toolbar = this.simple_toolbar
         setSupportActionBar(toolbar)
 
-        val ab = getSupportActionBar()
+        val ab = supportActionBar
         ab.setHomeAsUpIndicator(R.drawable.abc_ic_ab_back_mtrl_am_alpha)
         ab.setDisplayHomeAsUpEnabled(true)
 
@@ -109,7 +109,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
@@ -117,7 +117,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        val id = item!!.getItemId()
+        val id = item!!.itemId
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
@@ -128,7 +128,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     private fun appComp(): ApplicationComponent {
-        return (getApplication() as App).getApplicationComponent()
+        return (application as App).getApplicationComponent()
     }
 
     private fun getActivityComponent(): MainActivityComponent {

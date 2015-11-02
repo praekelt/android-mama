@@ -126,7 +126,7 @@ public class DetailPageActivity() : AppCompatActivity(), Animator.AnimatorListen
         val animator: ValueAnimator = ValueAnimator.ofFloat()
         animator.addUpdateListener{valueAnimator ->
             this.tv_collapsing_title
-                    .setTextSize(TypedValue.COMPLEX_UNIT_PX, (valueAnimator.getAnimatedValue() as Float))
+                    .setTextSize(TypedValue.COMPLEX_UNIT_PX, (valueAnimator.animatedValue as Float))
         }
         return animator
     }
@@ -138,7 +138,7 @@ public class DetailPageActivity() : AppCompatActivity(), Animator.AnimatorListen
     private fun createTitleTextPaddingAnimator(): ValueAnimator{
         val animator: ValueAnimator = ValueAnimator.ofFloat()
         animator.addUpdateListener{valueAnimator ->
-            this.tv_collapsing_title.setPadding((valueAnimator.getAnimatedValue() as Int),
+            this.tv_collapsing_title.setPadding((valueAnimator.animatedValue as Int),
                     this.tv_collapsing_title.paddingTop,
                     this.tv_collapsing_title.paddingRight,
                     this.tv_collapsing_title.paddingBottom)

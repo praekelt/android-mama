@@ -6,8 +6,6 @@ import android.support.v7.widget.RecyclerView
 import com.raizlabs.android.dbflow.sql.builder.Condition
 import com.raizlabs.android.dbflow.sql.language.Select
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.act
-import org.jetbrains.anko.ctx
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
 import za.foundation.praekelt.mama.api.model.Page

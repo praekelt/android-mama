@@ -27,7 +27,7 @@ class CategoryListAdapter(var orderBy: OrderBy = OrderBy.POSITION,
 
     override fun onCreateViewHolder(parent: ViewGroup?,
                                     viewType: Int): CategoryListAdapter.ViewHolder? {
-        val view: View? = LayoutInflater.from(parent?.getContext()).inflate(
+        val view: View? = LayoutInflater.from(parent?.context).inflate(
                 R.layout.category_list_item, parent, false)
         return ViewHolder(view)
     }
