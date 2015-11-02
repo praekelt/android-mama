@@ -54,7 +54,7 @@ public class MainActivityViewModelModule {
     public Observable<Repo> createCloneObs(Observable<Boolean> networkObs, UCDService ucdService,
                                            Context ctx){
         return networkObs.filter(connected -> connected)
-                .map(connected -> SharedPrefsUtil.INSTANCE$.getCommitFromSharedPrefs(ctx))
+                .map(connected -> SharedPrefsUtil.INSTANCE.getCommitFromSharedPrefs(ctx))
                 .filter(commit -> commit.equals(""))
                 .doOnNext(commit -> Log.i(TAG, "repo doesn't exist"))
                 .flatMap(commit -> ucdService.cloneRepo());
@@ -66,14 +66,14 @@ public class MainActivityViewModelModule {
     public Observable<RepoPull> createUpdateObs(Observable<Boolean> networkObs, UCDService ucdService,
                                                 Context ctx){
         return networkObs.filter(connected -> connected)
-                .map(connected -> SharedPrefsUtil.INSTANCE$.getCommitFromSharedPrefs(ctx))
+                .map(connected -> SharedPrefsUtil.INSTANCE.getCommitFromSharedPrefs(ctx))
                 .filter(commit -> !commit.equals(""))
                 .doOnNext(commit -> Log.i(TAG, "repo exists, checking for update"))
                 .flatMap(commit -> ucdService.getRepoStatus())
                 .filter(repoStatus -> !repoStatus.getCommit().equals(""))
-                .filter(repoStatus -> !SharedPrefsUtil.INSTANCE$
+                .filter(repoStatus -> !SharedPrefsUtil.INSTANCE
                         .getCommitFromSharedPrefs(ctx).equals(repoStatus.getCommit()))
-                .map(repoStatus -> SharedPrefsUtil.INSTANCE$.getCommitFromSharedPrefs(ctx))
+                .map(repoStatus -> SharedPrefsUtil.INSTANCE.getCommitFromSharedPrefs(ctx))
                 .doOnNext(commit -> Log.i(TAG, "getting update"))
                 .flatMap(ucdService::pullRepo);
     }
@@ -87,8 +87,8 @@ public class MainActivityViewModelModule {
                                                  UCDService ucdService, Context ctx){
         return createCloneObs(networkObs, ucdService, ctx)
                 .mergeWith(createUpdateObs(networkObs, ucdService, ctx))
-                .doOnNext(DBTransaction.INSTANCE$::saveRepo)
-                .doOnNext(repo -> SharedPrefsUtil.INSTANCE$
+                .doOnNext(DBTransaction.INSTANCE::saveRepo)
+                .doOnNext(repo -> SharedPrefsUtil.INSTANCE
                         .saveCommitToSharedPrefs(ctx, repo.getCommit()))
                 .doOnNext(repo -> Log.i(TAG, "SP saved"))
                 .doOnNext(repo -> Observable.interval(500, TimeUnit.MILLISECONDS)

@@ -39,7 +39,7 @@ public class MainActivityAndroidTest {
     @Test
     public void testCategoryTabs() {
         //If if no categories yet check empty list notification is shown
-        if (SharedPrefsUtil.INSTANCE$.getCommitFromSharedPrefs(rule.getActivity()).equals(""))
+        if (SharedPrefsUtil.INSTANCE.getCommitFromSharedPrefs(rule.getActivity()).equals(""))
             onView(withId(R.id.tv_empty_list)).check(matches(isDisplayed()));
 
         tir = new ObservableIdlingResource(rule.getActivity().getViewModel().getRepoObs());

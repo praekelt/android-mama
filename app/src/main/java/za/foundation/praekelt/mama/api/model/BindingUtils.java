@@ -36,7 +36,7 @@ public class BindingUtils {
         if (vp.getAdapter() == null) {
             System.out.println("no vp adapter present");
             vp.setAdapter(new CategoryPageAdapter(fm,
-                    SharedPrefsUtil.INSTANCE$.getLocale(tl.getContext()), OrderBy.POSITION, items));
+                    SharedPrefsUtil.INSTANCE.getLocale(tl.getContext()), OrderBy.POSITION, items));
         } else {
             System.out.println("refreshing vp adapter");
             ((CategoryPageAdapter) vp.getAdapter()).setCategories(items);
