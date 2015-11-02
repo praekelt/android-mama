@@ -5,11 +5,11 @@ apply plugin: 'me.tatarka.retrolambda'
 
 buildscript {
     ext {
-        kotlin_version = '0.12.1218'
+        kotlin_version = '1.0.0-beta-1038'
         androidAptVersion = "1.4"
         dbFlowVersion = "2.1.0"
         gsonVersion = "2.3"
-        supportLibVersion = "23.0.1"
+        supportLibVersion = "23.1.0"
         picassoVersion = "2.5.2"
         ottoVersion = "1.3.8"
         okioVersion = "1.5.0"
@@ -19,7 +19,7 @@ buildscript {
         daggerVersion = "2.0.1"
         annotationApiVersion = "1.2"
         rxAndroidVersion = "0.25.0"
-        ankoVersion = "0.6.3-15s"
+        ankoVersion = "0.7.2"
         retrolambdaVersion = "2.0.6"
 
         //test dependency versions
@@ -28,14 +28,16 @@ buildscript {
         robolectricVersion = "3.0"
         leakCanaryVersion = "1.3.1"
         espressoVersion = "2.2"
+        mockitoVersion = "2.0.31-beta"
     }
     repositories {
         mavenCentral()
         maven { url 'http://oss.sonatype.org/content/repositories/snapshots' }
+        jcenter()
     }
 
     dependencies {
-        classpath 'org.jetbrains.kotlin:kotlin-android-extensions:0.12.1218'
+        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
     }
 }
 
@@ -79,7 +81,7 @@ dependencies {
     compile "com.android.support:design:$supportLibVersion"
     compile "com.android.support:cardview-v7:$supportLibVersion"
     compile "com.android.support:recyclerview-v7:$supportLibVersion"
-    kapt('com.android.databinding:compiler:1.0-rc1') {
+    kapt('com.android.databinding:compiler:1.0-rc4') {
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
     }
     compile "com.squareup.picasso:picasso:$picassoVersion"
@@ -96,7 +98,8 @@ dependencies {
     kapt "com.raizlabs.android:DBFlow-Compiler:$dbFlowVersion"
     compile "com.raizlabs.android:DBFlow-Core:$dbFlowVersion"
     compile "com.raizlabs.android:DBFlow:$dbFlowVersion"
-    compile "org.jetbrains.anko:anko:$ankoVersion"
+    compile "org.jetbrains.anko:anko-sdk15:$ankoVersion" // sdk19, sdk21, sdk23 are also available
+    compile "org.jetbrains.anko:anko-support-v4:$ankoVersion"
     retrolambdaConfig "net.orfjackal.retrolambda:retrolambda:$retrolambdaVersion"
 
     debugCompile "com.squareup.leakcanary:leakcanary-android:1.3.1"
@@ -111,6 +114,7 @@ dependencies {
         exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
 
     //Connected tests dependencies
     androidTestCompile ("com.android.support.test:runner:0.3"){

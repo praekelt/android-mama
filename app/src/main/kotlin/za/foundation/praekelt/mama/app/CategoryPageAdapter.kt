@@ -19,26 +19,21 @@ import java.util.ArrayList
  */
 class CategoryPageAdapter(val fm: FragmentManager, val locale: String,
                           var orderBy: OrderBy = OrderBy.POSITION,
-                          categories: MutableList<Category> = ArrayList<Category>()) :
+                          mCategories: MutableList<Category> = ArrayList<Category>()) :
         FragmentStatePagerAdapter(fm) {
-    var categories: MutableList<Category>
+    var categories: MutableList<Category> = sortList(mCategories)
         set(cats){
-            $categories = cats
+            field = cats
             notifyDataSetChanged()
         }
 
-    init {
-        println("cat size ${categories.size()}")
-        $categories = sortList(categories)
-    }
-
     override fun getCount(): Int {
-        return if (categories.isNotEmpty()) categories.size() else 1
+        return if (categories.isNotEmpty()) categories.size else 1
     }
 
     override fun getItem(position: Int): Fragment? {
         return if (categories.isNotEmpty())
-            CategoryListFragment(categories[position].getUuid(), locale)
+            CategoryListFragment(categories[position].uuid, locale)
         else {
             EmptyListFragment(R.string.empty_categories_message, R.drawable.ic_archive_accent_48dp)
         }
@@ -46,15 +41,15 @@ class CategoryPageAdapter(val fm: FragmentManager, val locale: String,
 
     override fun getPageTitle(position: Int): CharSequence? {
         return if (categories.isNotEmpty())
-            categories[position].getTitle()
+            categories[position].title
         else
             null
     }
 
     fun sortList(catList: MutableList<Category>): MutableList<Category> {
         when (orderBy) {
-            OrderBy.POSITION -> return catList.sortBy(CategoryPositionComparator()) as MutableList
-            OrderBy.NAME -> return catList.sortBy(CategoryNameComparator()) as MutableList
+            OrderBy.POSITION -> return catList.sortedWith(CategoryPositionComparator()) as MutableList
+            OrderBy.NAME -> return catList.sortedWith(CategoryNameComparator()) as MutableList
             else -> return catList
         }
     }

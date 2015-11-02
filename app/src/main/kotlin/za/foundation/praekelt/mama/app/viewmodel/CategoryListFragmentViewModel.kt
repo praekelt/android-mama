@@ -6,8 +6,8 @@ import android.support.v7.widget.RecyclerView
 import com.raizlabs.android.dbflow.sql.builder.Condition
 import com.raizlabs.android.dbflow.sql.language.Select
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.act
-import org.jetbrains.anko.ctx
+import org.jetbrains.anko.support.v4.act
+import org.jetbrains.anko.support.v4.ctx
 import za.foundation.praekelt.mama.api.model.Page
 import za.foundation.praekelt.mama.api.model.Page_Table
 import za.foundation.praekelt.mama.app.App
@@ -26,11 +26,11 @@ public class CategoryListFragmentViewModel(frag: CategoryListFragment) :
     var locale: String = ""
 
     companion object {
-        val TAG: String = "CategoryListFragmentViewModel"
+        const val TAG: String = "CategoryListFragmentViewModel"
     }
 
     override fun onAttachFragment(frag: CategoryListFragment) {
-        super<BaseFragmentViewModel>.onAttachFragment(frag)
+        super.onAttachFragment(frag)
         locale = SharedPrefsUtil.getLocale(frag.ctx)
         layoutManager = LinearLayoutManager(frag.ctx)
         categoryUuid = frag.uuid
@@ -39,14 +39,14 @@ public class CategoryListFragmentViewModel(frag: CategoryListFragment) :
 
     override fun onDestroy() {
         layoutManager = null
-        (fragment?.get()?.act?.getApplicationContext() as App).getApplicationComponent().bus()
+        (fragment?.get()?.act?.applicationContext as App).getApplicationComponent().bus()
                 .post(ViewModelPost(CategoryListFragmentViewModel.TAG + categoryUuid, this))
-        super<BaseFragmentViewModel>.onDestroy()
+        super.onDestroy()
     }
 
     fun refreshList(): Unit {
         pages.clear()
-        pages.addAll(Select().from(javaClass<Page>())
+        pages.addAll(Select().from(Page::class.java)
                 .where(Condition.column(Page_Table.PRIMARYCATEGORYID).`is`(categoryUuid))
                 .and(Condition.column(Page_Table.LOCALEID).`is`(locale))
                 .and(Condition.column(Page_Table.PUBLISHED).`is`(true)).queryList())

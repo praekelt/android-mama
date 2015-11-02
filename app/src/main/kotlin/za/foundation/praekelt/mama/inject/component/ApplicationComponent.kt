@@ -10,8 +10,8 @@ import javax.inject.Singleton
  * Dagger component for Application
  */
 
-Singleton
-Component(modules = arrayOf(ApplicationModule::class))
+@Singleton
+@Component(modules = arrayOf(ApplicationModule::class))
 public interface ApplicationComponent{
     fun inject (app: App): Unit
 

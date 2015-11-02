@@ -7,12 +7,7 @@ import java.lang.ref.WeakReference
  * Created by eduardokolomajr on 2015/09/07.
  */
 public abstract class BaseFragmentViewModel<T: Fragment>(frag: T): BaseViewModel(){
-    var fragment: WeakReference<T>?
-        private set
-
-    init{
-        $fragment = WeakReference(frag)
-    }
+    var fragment: WeakReference<T>? = WeakReference(frag)
 
     override fun onDestroy() {
         super.onCreate()
@@ -21,7 +16,7 @@ public abstract class BaseFragmentViewModel<T: Fragment>(frag: T): BaseViewModel
         fragment = null
     }
 
-    open fun onAttachFragment(activity: T){
-        fragment = WeakReference(activity)
+    open fun onAttachFragment(frag: T){
+        fragment = WeakReference(frag)
     }
 }

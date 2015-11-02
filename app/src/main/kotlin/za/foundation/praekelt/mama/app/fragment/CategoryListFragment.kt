@@ -24,13 +24,13 @@ class CategoryListFragment(var uuid: String = "", var locale: String = "") : Fra
         val localeKey: String = "locale"
     }
 
-    val fragComp: CategoryListFragmentComponent by Delegates.lazy { getFragmentComponent() }
+    val fragComp: CategoryListFragmentComponent by lazy { getFragmentComponent() }
     var viewModel: CategoryListFragmentViewModel by Delegates.notNull()
         @Inject set
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        super<Fragment>.onCreateView(inflater, container, savedInstanceState)
+        super.onCreateView(inflater, container, savedInstanceState)
 
         Observable.just(savedInstanceState)
                 .filter { it != null }
@@ -51,26 +51,26 @@ class CategoryListFragment(var uuid: String = "", var locale: String = "") : Fra
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super<Fragment>.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super<Fragment>.onViewStateRestored(savedInstanceState)
+        super.onViewStateRestored(savedInstanceState)
     }
 
     override fun onResume() {
-        super<Fragment>.onResume()
+        super.onResume()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
-        super<Fragment>.onSaveInstanceState(outState)
+        super.onSaveInstanceState(outState)
         outState?.putString(argsKeys.uuidKey, uuid)
         outState?.putString(argsKeys.localeKey, locale)
     }
 
     override fun onDestroy() {
         viewModel.onDestroy()
-        super<Fragment>.onDestroy()
+        super.onDestroy()
     }
 
     fun getFragmentComponent(): CategoryListFragmentComponent {

@@ -15,6 +15,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.singleTop
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.info
 import rx.Observable
 import za.foundation.praekelt.mama.R
 import za.foundation.praekelt.mama.app.App
@@ -35,7 +36,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         private set
 
     companion object {
-        val TAG: String = "MainActivity"
+        const val TAG: String = "MainActivity"
     }
 
     private object argsKeys {
@@ -51,14 +52,14 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super<AppCompatActivity>.onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState)
         val binding: ActivityMainBinding = DataBindingUtil.setContentView(this,
                 R.layout.activity_main)
 
         val toolbar: Toolbar = this.simple_toolbar
         setSupportActionBar(toolbar)
 
-        val ab = getSupportActionBar()
+        val ab = supportActionBar
         ab.setHomeAsUpIndicator(R.drawable.abc_ic_ab_back_mtrl_am_alpha)
         ab.setDisplayHomeAsUpEnabled(true)
 
@@ -86,7 +87,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     override fun onResume() {
-        super<AppCompatActivity>.onResume()
+        super.onResume()
         println("resuming")
 
         networkObs.filter { !it }
@@ -98,17 +99,17 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onPause() {
         activityComp.bus().unregister(this)
-        super<AppCompatActivity>.onPause()
+        super.onPause()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         //outState?.putInt(argsKeys.tabPositionKey, tabLayout.getSelectedTabPosition())
-        super<AppCompatActivity>.onSaveInstanceState(outState)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
@@ -116,18 +117,18 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        val id = item!!.getItemId()
+        val id = item!!.itemId
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true
         }
 
-        return super<AppCompatActivity>.onOptionsItemSelected(item)
+        return super.onOptionsItemSelected(item)
     }
 
     private fun appComp(): ApplicationComponent {
-        return (getApplication() as App).getApplicationComponent()
+        return (application as App).getApplicationComponent()
     }
 
     private fun getActivityComponent(): MainActivityComponent {
@@ -143,7 +144,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
                 Snackbar.LENGTH_LONG).show()
     }
 
-    Subscribe
+    @Subscribe
     fun pageClickedEvent(post: PageItemClickedPost){
         toast("item clicked => ${post.pageUuid}")
         startActivity(intentFor<DetailPageActivity>(
@@ -152,8 +153,8 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onDestroy() {
         info("start destroy")
-        super<AppCompatActivity>.onDestroy()
         viewModel.onDestroy()
         info("end destroy")
+        super.onDestroy()
     }
 }

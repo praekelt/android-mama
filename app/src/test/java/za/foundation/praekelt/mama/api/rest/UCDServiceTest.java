@@ -17,8 +17,8 @@ import za.foundation.praekelt.mama.BuildConfig;
 import za.foundation.praekelt.mama.api.db.AppDatabase;
 import za.foundation.praekelt.mama.app.App;
 
-import static za.foundation.praekelt.mama.api.rest.RestPackage.createTestUCDService;
-import static za.foundation.praekelt.mama.api.rest.RestPackage.createUCDServiceGson;
+import static za.foundation.praekelt.mama.api.rest.RestApiKt.createTestUCDService;
+import static za.foundation.praekelt.mama.api.rest.RestApiKt.createUCDServiceGson;
 
 /**
  * Tests for {@link UCDService}
