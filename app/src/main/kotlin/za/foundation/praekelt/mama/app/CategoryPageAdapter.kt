@@ -19,18 +19,13 @@ import java.util.ArrayList
  */
 class CategoryPageAdapter(val fm: FragmentManager, val locale: String,
                           var orderBy: OrderBy = OrderBy.POSITION,
-                          categories: MutableList<Category> = ArrayList<Category>()) :
+                          mCategories: MutableList<Category> = ArrayList<Category>()) :
         FragmentStatePagerAdapter(fm) {
-    var categories: MutableList<Category>
+    var categories: MutableList<Category> = sortList(mCategories)
         set(cats){
             field = cats
             notifyDataSetChanged()
         }
-
-    init {
-        println("cat size ${categories.size}")
-        $categories = sortList(categories)
-    }
 
     override fun getCount(): Int {
         return if (categories.isNotEmpty()) categories.size else 1
