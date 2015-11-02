@@ -20,7 +20,7 @@ import java.lang.reflect.Field;
 import za.foundation.praekelt.mama.BuildConfig;
 import za.foundation.praekelt.mama.R;
 import za.foundation.praekelt.mama.api.db.AppDatabase;
-import za.foundation.praekelt.mama.api.rest.RestPackage;
+import za.foundation.praekelt.mama.api.rest.RestApiKt;
 import za.foundation.praekelt.mama.app.App;
 import za.foundation.praekelt.mama.app.activity.MainActivity;
 
@@ -40,7 +40,7 @@ public class MainActivityViewModelTest {
     public void setUp() {
         activityController = Robolectric.buildActivity(MainActivity.class).create();
         context = ShadowApplication.getInstance().getApplicationContext();
-        RestPackage.setLoadTestService(true);
+        RestApiKt.setLoadTestService(true);
         FlowManager.init(context);
         FlowManager.getDatabase(AppDatabase.NAME).getWritableDatabase().acquireReference();
     }
