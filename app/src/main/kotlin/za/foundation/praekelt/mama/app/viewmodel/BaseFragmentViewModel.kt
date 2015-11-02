@@ -16,7 +16,7 @@ public abstract class BaseFragmentViewModel<T: Fragment>(frag: T): BaseViewModel
         fragment = null
     }
 
-    open fun onAttachFragment(activity: T){
-        fragment = WeakReference(activity)
+    open fun onAttachFragment(frag: T){
+        fragment = WeakReference(frag)
     }
 }
