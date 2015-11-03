@@ -5,8 +5,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.raizlabs.android.dbflow.sql.builder.Condition
 import com.raizlabs.android.dbflow.sql.language.Select
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.async
+import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
 import za.foundation.praekelt.mama.api.model.Page
@@ -48,12 +47,16 @@ public class CategoryListFragmentViewModel(frag: CategoryListFragment) :
     }
 
     fun refreshList(): Unit {
-        pages.clear()
-        async {
-            pages.addAll(Select().from(Page::class.java)
+        with(pages){
+            clear()
+            //Use asyncResult to avoid double binding pass
+            async {
+                Select().from(Page::class.java)
                     .where(Condition.column(Page_Table.PRIMARYCATEGORYID).`is`(categoryUuid))
                     .and(Condition.column(Page_Table.LOCALEID).`is`(locale))
-                    .and(Condition.column(Page_Table.PUBLISHED).`is`(true)).queryList())
+                    .and(Condition.column(Page_Table.PUBLISHED).`is`(true)).queryList()
+                .let{addAll(it)}
+            }
         }
     }
 }

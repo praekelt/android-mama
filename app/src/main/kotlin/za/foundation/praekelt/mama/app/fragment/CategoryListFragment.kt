@@ -46,7 +46,6 @@ class CategoryListFragment(var uuid: String = "", var locale: String = "") : Fra
         fragComp.inject(this)
         viewModel.onAttachFragment(this)
         bind.setCategoryListVM(viewModel)
-        bind.executePendingBindings()
         return bind.getRoot()
     }
 

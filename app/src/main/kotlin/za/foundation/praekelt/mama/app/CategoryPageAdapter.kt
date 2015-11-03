@@ -2,6 +2,7 @@ package za.foundation.praekelt.mama.app
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
 import za.foundation.praekelt.mama.R
@@ -20,7 +21,7 @@ import java.util.ArrayList
 class CategoryPageAdapter(val fm: FragmentManager, val locale: String,
                           var orderBy: OrderBy = OrderBy.POSITION,
                           mCategories: MutableList<Category> = ArrayList<Category>()) :
-        FragmentStatePagerAdapter(fm) {
+        FragmentPagerAdapter(fm) {
     var categories: MutableList<Category> = sortList(mCategories)
         set(cats){
             field = cats

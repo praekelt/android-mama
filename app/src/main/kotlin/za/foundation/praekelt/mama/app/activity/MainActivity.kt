@@ -88,13 +88,13 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onResume() {
         super.onResume()
-        println("resuming")
+//        info("resuming")
 
         networkObs.filter { !it }
                 .subscribe { noInternetSnackBar() }
 
         activityComp.bus().register(this)
-        println("end resuming")
+//        info("end resuming")
     }
 
     override fun onPause() {
@@ -152,9 +152,9 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     override fun onDestroy() {
-        info("start destroy")
+//        info("start destroy")
         viewModel.onDestroy()
-        info("end destroy")
+//        info("end destroy")
         super.onDestroy()
     }
 }
