@@ -26,7 +26,7 @@ class CategoryListFragment(var uuid: String = "", var locale: String = "") : Fra
     }
 
     val fragComp: CategoryListFragmentComponent by lazy { getFragmentComponent() }
-    var viewModel: CategoryListFragmentViewModel by Delegates.notNull()
+    lateinit var viewModel: CategoryListFragmentViewModel
         @Inject set
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,

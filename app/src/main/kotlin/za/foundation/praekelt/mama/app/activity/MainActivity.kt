@@ -44,12 +44,12 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         val fragmentPositionKey = "fragPosition"
     }
 
-    var networkObs: Observable<Boolean> by Delegates.notNull()
-        @Inject set
-    var activityComp: MainActivityComponent by Delegates.notNull()
-    var viewModel: MainActivityViewModel by Delegates.notNull()
-        @Inject set
 
+    val activityComp: MainActivityComponent by lazy { getActivityComponent() }
+    lateinit var viewModel: MainActivityViewModel
+        @Inject set
+    lateinit var networkObs: Observable<Boolean>
+        @Inject set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +77,6 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
             }
         }
 
-        activityComp = getActivityComponent()
         activityComp.inject(this)
         viewModel.onAttachActivity(this)
         binding.setMainActVM(viewModel)

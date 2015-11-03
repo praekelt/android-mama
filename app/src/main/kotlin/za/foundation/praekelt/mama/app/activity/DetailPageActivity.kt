@@ -32,10 +32,10 @@ public class DetailPageActivity() : AppCompatActivity(), Animator.AnimatorListen
         val uuidKey = "pageUuid"
     }
 
-    var pageUuid: String by Delegates.notNull()
-        @Inject set
     val activityComp: DetailPageActivityComponent by lazy { getDetailPageActivityComponent() }
-    var viewModel: DetailPageActivityViewModel by Delegates.notNull()
+    lateinit var pageUuid: String
+        @Inject set
+    lateinit var viewModel: DetailPageActivityViewModel
         @Inject set
 
     val animSet: AnimatorSet = AnimatorSet()
