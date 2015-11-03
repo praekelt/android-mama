@@ -29,7 +29,7 @@ public class DetailPageActivity() : AppCompatActivity(), Animator.AnimatorListen
     }
 
     object argsKeys {
-        val uuidKey = "pageUuid"
+        const val uuidKey = "pageUuid"
     }
 
     val activityComp: DetailPageActivityComponent by lazy { getDetailPageActivityComponent() }
