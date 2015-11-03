@@ -111,6 +111,7 @@ public class DetailPageActivity() : AppCompatActivity(), Animator.AnimatorListen
             collapsed = true
         }else {
             collapsed = false
+            this.tv_collapsing_title.maxLines = 3
         }
     }
 
