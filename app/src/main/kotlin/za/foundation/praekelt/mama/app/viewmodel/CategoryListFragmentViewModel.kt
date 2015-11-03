@@ -5,7 +5,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.raizlabs.android.dbflow.sql.builder.Condition
 import com.raizlabs.android.dbflow.sql.language.Select
-import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.act
 import org.jetbrains.anko.support.v4.ctx
 import za.foundation.praekelt.mama.api.model.Page
@@ -31,9 +31,11 @@ public class CategoryListFragmentViewModel(frag: CategoryListFragment) :
 
     override fun onAttachFragment(frag: CategoryListFragment) {
         super.onAttachFragment(frag)
-        locale = SharedPrefsUtil.getLocale(frag.ctx)
-        layoutManager = LinearLayoutManager(frag.ctx)
-        categoryUuid = frag.uuid
+        with(fragment?.get()!!){
+            this@CategoryListFragmentViewModel.locale = SharedPrefsUtil.getLocale(ctx)
+            layoutManager = LinearLayoutManager(ctx)
+            categoryUuid = uuid
+        }
         refreshList()
     }
 
@@ -45,10 +47,15 @@ public class CategoryListFragmentViewModel(frag: CategoryListFragment) :
     }
 
     fun refreshList(): Unit {
-        pages.clear()
-        pages.addAll(Select().from(Page::class.java)
-                .where(Condition.column(Page_Table.PRIMARYCATEGORYID).`is`(categoryUuid))
-                .and(Condition.column(Page_Table.LOCALEID).`is`(locale))
-                .and(Condition.column(Page_Table.PUBLISHED).`is`(true)).queryList())
+        with(pages){
+            clear()
+            async {
+                Select().from(Page::class.java)
+                    .where(Condition.column(Page_Table.PRIMARYCATEGORYID).`is`(categoryUuid))
+                    .and(Condition.column(Page_Table.LOCALEID).`is`(locale))
+                    .and(Condition.column(Page_Table.PUBLISHED).`is`(true)).queryList()
+                .let{addAll(it)}
+            }
+        }
     }
 }

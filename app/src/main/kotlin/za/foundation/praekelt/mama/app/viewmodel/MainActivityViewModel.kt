@@ -8,9 +8,12 @@ import com.raizlabs.android.dbflow.sql.builder.Condition
 import com.raizlabs.android.dbflow.sql.language.Select
 import kotlinx.android.synthetic.include_main_activity_view_pager.viewpager
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.async
 import org.jetbrains.anko.info
 import org.jetbrains.anko.warn
 import rx.Observable
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import za.foundation.praekelt.mama.BR
 import za.foundation.praekelt.mama.api.model.Category
 import za.foundation.praekelt.mama.api.model.Category_Table
@@ -32,8 +35,8 @@ import za.foundation.praekelt.mama.util.Constants as _C
  */
 public class MainActivityViewModel(mainActivity: MainActivity) :
         BaseActivityViewModel<MainActivity>(mainActivity), AnkoLogger {
-    val viewModelComp: MainActivityViewModelComponent by lazy(LazyThreadSafetyMode.NONE) { getViewModelComponent() }
-    var repoObs: Observable<Repo> by Delegates.notNull()
+    val viewModelComp: MainActivityViewModelComponent by lazy { getViewModelComponent() }
+    lateinit var repoObs: Observable<Repo>
         @Inject set
     var fm: FragmentManager? = null
     var app: App
@@ -47,24 +50,17 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
     init {
         app = mainActivity.activityComp.app()
         viewModelComp.inject(this);
-        initRepoObs()
-    }
-
-    fun initRepoObs(): Unit{
-        repoObs.doOnNext{ refreshCategories() }
-                .doOnNext { Observable.interval(500, TimeUnit.MILLISECONDS).toBlocking().first() }
-                .subscribe(
-                        { repo -> notifyPropertyChanged(BR.vp) },
-                        { err -> warn("error getting/updating repo") })
     }
 
     override fun onAttachActivity(activity: MainActivity) {
-        info("start attach activity")
+//        info("start attach activity")
         super.onAttachActivity(activity)
         refreshCategories()
-        vp = act?.get()?.viewpager
-        fm = act?.get()?.supportFragmentManager
-        notifyPropertyChanged(BR.vp)
+        with(act?.get()!!){
+            vp = viewpager
+            fm = supportFragmentManager
+            notifyPropertyChanged(BR.vp)
+        }
     }
 
     override fun onDestroy() {
@@ -75,11 +71,16 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
     }
 
     fun refreshCategories(): Unit {
-        categories.clear()
-        categories.addAll(Select().from(Category::class.java)
-                .where(Condition.column(Category_Table.FEATUREDINNAVBAR).`is`(true))
-                .and(Condition.column(Category_Table.LOCALEID).`is`(
-                        _C.SHARED_PREFS_LOCALE_DEFAULT)).queryList())
+        with(categories){
+            clear()
+            async {
+                Select().from(Category::class.java)
+                    .where(Condition.column(Category_Table.FEATUREDINNAVBAR).`is`(true))
+                    .and(Condition.column(Category_Table.LOCALEID).`is`(
+                            _C.SHARED_PREFS_LOCALE_DEFAULT)).queryList()
+                    .let{ addAll(it) }
+            }
+        }
     }
 
     fun getViewModelComponent(): MainActivityViewModelComponent {

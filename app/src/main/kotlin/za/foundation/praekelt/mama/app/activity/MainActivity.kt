@@ -44,24 +44,24 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         val fragmentPositionKey = "fragPosition"
     }
 
-    var networkObs: Observable<Boolean> by Delegates.notNull()
-        @Inject set
-    var activityComp: MainActivityComponent by Delegates.notNull()
-    var viewModel: MainActivityViewModel by Delegates.notNull()
-        @Inject set
 
+    val activityComp: MainActivityComponent by lazy { getActivityComponent() }
+    lateinit var viewModel: MainActivityViewModel
+        @Inject set
+    lateinit var networkObs: Observable<Boolean>
+        @Inject set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding: ActivityMainBinding = DataBindingUtil.setContentView(this,
                 R.layout.activity_main)
 
-        val toolbar: Toolbar = this.simple_toolbar
-        setSupportActionBar(toolbar)
+        setSupportActionBar(this.simple_toolbar)
 
-        val ab = supportActionBar
-        ab.setHomeAsUpIndicator(R.drawable.abc_ic_ab_back_mtrl_am_alpha)
-        ab.setDisplayHomeAsUpEnabled(true)
+        with(supportActionBar) {
+            setHomeAsUpIndicator(R.drawable.abc_ic_ab_back_mtrl_am_alpha)
+            setDisplayHomeAsUpEnabled(true)
+        }
 
         this.nav_view.setNavigationItemSelectedListener {
             menuItem ->
@@ -70,17 +70,13 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
             return@setNavigationItemSelectedListener true
         }
 
-        Observable.just(savedInstanceState)
-                .filter { it != null }
-                .flatMap { Observable.from(it?.keySet()) }
-                .subscribe { key ->
-                    info("restoring frag $key")
-                    when (key) {
-                        argsKeys.tabPositionKey -> tabPosition = savedInstanceState!!.getInt(key, 0)
-                    }
-                }
+        savedInstanceState?.keySet()?.forEach {
+            when (it) {
+                argsKeys.tabPositionKey -> tabPosition = savedInstanceState.getInt(it, 0)
+                else -> {}
+            }
+        }
 
-        activityComp = getActivityComponent()
         activityComp.inject(this)
         viewModel.onAttachActivity(this)
         binding.setMainActVM(viewModel)
@@ -88,13 +84,13 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onResume() {
         super.onResume()
-        println("resuming")
+//        info("resuming")
 
         networkObs.filter { !it }
                 .subscribe { noInternetSnackBar() }
 
         activityComp.bus().register(this)
-        println("end resuming")
+//        info("end resuming")
     }
 
     override fun onPause() {
@@ -152,7 +148,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     override fun onDestroy() {
-        info("start destroy")
+//        info("start destroy")
         viewModel.onDestroy()
         info("end destroy")
         super.onDestroy()

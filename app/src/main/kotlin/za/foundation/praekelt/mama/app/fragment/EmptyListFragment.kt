@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.fragment_empty_list.tv_empty_list
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 import rx.Observable
 import za.foundation.praekelt.mama.R
 
@@ -26,16 +27,15 @@ class EmptyListFragment(@StringRes var message: Int = 0, @DrawableRes var image:
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         val view: View = inflater?.inflate(R.layout.fragment_empty_list, container, false)!!
-        Observable.just(savedInstanceState)
-            .filter{ it != null }
-            .flatMap{ Observable.from(it?.keySet()) }
-            .subscribe{ key ->
-                Log.i("ELF", "restoring frag $key")
-                when (key) {
-                    argsKeys.messageKey -> message = savedInstanceState!!.getInt(key)
-                    argsKeys.imageKey -> image = savedInstanceState!!.getInt(key)
-                }
+
+        savedInstanceState?.keySet()?.forEach {
+            when (it) {
+                argsKeys.messageKey -> message = savedInstanceState.getInt(it)
+                argsKeys.imageKey -> image = savedInstanceState.getInt(it)
+                else -> {}
             }
+        }
+
         return view
     }
 

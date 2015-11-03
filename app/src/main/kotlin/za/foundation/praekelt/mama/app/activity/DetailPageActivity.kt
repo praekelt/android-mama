@@ -29,13 +29,13 @@ public class DetailPageActivity() : AppCompatActivity(), Animator.AnimatorListen
     }
 
     object argsKeys {
-        val uuidKey = "pageUuid"
+        const val uuidKey = "pageUuid"
     }
 
-    var pageUuid: String by Delegates.notNull()
-        @Inject set
     val activityComp: DetailPageActivityComponent by lazy { getDetailPageActivityComponent() }
-    var viewModel: DetailPageActivityViewModel by Delegates.notNull()
+    lateinit var pageUuid: String
+        @Inject set
+    lateinit var viewModel: DetailPageActivityViewModel
         @Inject set
 
     val animSet: AnimatorSet = AnimatorSet()
@@ -111,6 +111,7 @@ public class DetailPageActivity() : AppCompatActivity(), Animator.AnimatorListen
             collapsed = true
         }else {
             collapsed = false
+            this.tv_collapsing_title.maxLines = 3
         }
     }
 

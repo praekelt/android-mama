@@ -1,6 +1,7 @@
 package za.foundation.praekelt.mama.inject.module;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.util.Log;
 
 import org.jetbrains.anko.Sdk15ServicesKt;
@@ -44,7 +45,9 @@ public class MainActivityViewModelModule {
 
     @Provides
     public Observable<Boolean> provideNetworkObservable(){
-        return Observable.just(Sdk15ServicesKt.getConnectivityManager(viewModel.getApp()).getActiveNetworkInfo())
+        return Observable.just(Sdk15ServicesKt.getConnectivityManager(viewModel.getApp()))
+                .observeOn(Schedulers.computation())
+                .map(ConnectivityManager::getActiveNetworkInfo)
                 .map(networkInfo -> (networkInfo != null && networkInfo.isConnected()));
     }
 
