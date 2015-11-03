@@ -39,10 +39,8 @@ public class CategoryListFragmentViewModel(frag: CategoryListFragment) :
 
     override fun onDestroy() {
         layoutManager = null
-        async {
-            (fragment?.get()?.act?.applicationContext as App).getApplicationComponent().bus()
-                    .post(ViewModelPost(CategoryListFragmentViewModel.TAG + categoryUuid, this.weakRef.get()))
-        }
+        (fragment?.get()?.act?.applicationContext as App).getApplicationComponent().bus()
+                .post(ViewModelPost(CategoryListFragmentViewModel.TAG + categoryUuid, this))
         super.onDestroy()
     }
 

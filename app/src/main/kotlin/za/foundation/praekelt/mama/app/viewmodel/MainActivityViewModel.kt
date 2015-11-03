@@ -50,14 +50,11 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
     init {
         app = mainActivity.activityComp.app()
         viewModelComp.inject(this);
-        initRepoObs()
     }
 
     fun initRepoObs(): Unit{
-        warn("init repo obs")
         repoObs.observeOn(Schedulers.io())
                 .doOnNext{ refreshCategories() }
-//                .doOnNext { Observable.interval(500, TimeUnit.MILLISECONDS).toBlocking().first() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { repo -> warn("notifying view pager prop changed");notifyPropertyChanged(BR.vp) },
@@ -76,10 +73,7 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
     override fun onDestroy() {
         fm = null
         vp = null
-        val q = ViewModelPost(TAG, this)
-        async {
-            act?.get()?.activityComp?.bus()?.post(q)
-        }
+        act?.get()?.activityComp?.bus()?.post(ViewModelPost(TAG, this))
         super.onDestroy()
     }
 
