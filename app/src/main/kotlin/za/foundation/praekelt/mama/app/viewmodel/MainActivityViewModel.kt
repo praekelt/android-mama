@@ -52,22 +52,15 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
         viewModelComp.inject(this);
     }
 
-    fun initRepoObs(): Unit{
-        repoObs.observeOn(Schedulers.io())
-                .doOnNext{ refreshCategories() }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        { repo -> warn("notifying view pager prop changed");notifyPropertyChanged(BR.vp) },
-                        { err -> warn("error getting/updating repo") })
-    }
-
     override fun onAttachActivity(activity: MainActivity) {
 //        info("start attach activity")
         super.onAttachActivity(activity)
         refreshCategories()
-        vp = act?.get()?.viewpager
-        fm = act?.get()?.supportFragmentManager
-        notifyPropertyChanged(BR.vp)
+        with(act?.get()!!){
+            vp = viewpager
+            fm = supportFragmentManager
+            notifyPropertyChanged(BR.vp)
+        }
     }
 
     override fun onDestroy() {
@@ -78,12 +71,15 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
     }
 
     fun refreshCategories(): Unit {
-        categories.clear()
-        async {
-            categories.addAll(Select().from(Category::class.java)
+        with(categories){
+            clear()
+            async {
+                Select().from(Category::class.java)
                     .where(Condition.column(Category_Table.FEATUREDINNAVBAR).`is`(true))
                     .and(Condition.column(Category_Table.LOCALEID).`is`(
-                            _C.SHARED_PREFS_LOCALE_DEFAULT)).queryList())
+                            _C.SHARED_PREFS_LOCALE_DEFAULT)).queryList()
+                    .let{ addAll(it) }
+            }
         }
     }
 

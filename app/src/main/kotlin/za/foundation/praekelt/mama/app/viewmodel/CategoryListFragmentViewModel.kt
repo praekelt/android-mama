@@ -31,9 +31,11 @@ public class CategoryListFragmentViewModel(frag: CategoryListFragment) :
 
     override fun onAttachFragment(frag: CategoryListFragment) {
         super.onAttachFragment(frag)
-        locale = SharedPrefsUtil.getLocale(frag.ctx)
-        layoutManager = LinearLayoutManager(frag.ctx)
-        categoryUuid = frag.uuid
+        with(fragment?.get()!!){
+            this@CategoryListFragmentViewModel.locale = SharedPrefsUtil.getLocale(ctx)
+            layoutManager = LinearLayoutManager(ctx)
+            categoryUuid = uuid
+        }
         refreshList()
     }
 
@@ -47,7 +49,6 @@ public class CategoryListFragmentViewModel(frag: CategoryListFragment) :
     fun refreshList(): Unit {
         with(pages){
             clear()
-            //Use asyncResult to avoid double binding pass
             async {
                 Select().from(Page::class.java)
                     .where(Condition.column(Page_Table.PRIMARYCATEGORYID).`is`(categoryUuid))
