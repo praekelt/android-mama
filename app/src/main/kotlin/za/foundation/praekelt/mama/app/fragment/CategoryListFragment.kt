@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 import rx.Observable
 import za.foundation.praekelt.mama.app.viewmodel.CategoryListFragmentViewModel
 import za.foundation.praekelt.mama.databinding.FragmentCategoryListBinding
@@ -32,15 +33,14 @@ class CategoryListFragment(var uuid: String = "", var locale: String = "") : Fra
                               savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        Observable.just(savedInstanceState)
-                .filter { it != null }
-                .flatMap { Observable.from(it?.keySet()) }
-                .subscribe { key ->
-                    when (key) {
-                        argsKeys.uuidKey -> uuid = savedInstanceState!!.getString(key)
-                        argsKeys.localeKey -> locale = savedInstanceState!!.getString(key)
-                    }
-                }
+        savedInstanceState?.keySet()?.forEach {
+            when (it) {
+                argsKeys.uuidKey -> uuid = savedInstanceState.getString(it)
+                argsKeys.localeKey -> locale = savedInstanceState.getString(it)
+                else -> {}
+            }
+        }
+
         val bind: FragmentCategoryListBinding =
                 FragmentCategoryListBinding.inflate(inflater, container, false)
         fragComp.inject(this)

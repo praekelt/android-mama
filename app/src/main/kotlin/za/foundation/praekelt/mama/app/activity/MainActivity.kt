@@ -56,12 +56,12 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         val binding: ActivityMainBinding = DataBindingUtil.setContentView(this,
                 R.layout.activity_main)
 
-        val toolbar: Toolbar = this.simple_toolbar
-        setSupportActionBar(toolbar)
+        setSupportActionBar(this.simple_toolbar)
 
-        val ab = supportActionBar
-        ab.setHomeAsUpIndicator(R.drawable.abc_ic_ab_back_mtrl_am_alpha)
-        ab.setDisplayHomeAsUpEnabled(true)
+        with(supportActionBar) {
+            setHomeAsUpIndicator(R.drawable.abc_ic_ab_back_mtrl_am_alpha)
+            setDisplayHomeAsUpEnabled(true)
+        }
 
         this.nav_view.setNavigationItemSelectedListener {
             menuItem ->
@@ -70,15 +70,12 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
             return@setNavigationItemSelectedListener true
         }
 
-        Observable.just(savedInstanceState)
-                .filter { it != null }
-                .flatMap { Observable.from(it?.keySet()) }
-                .subscribe { key ->
-                    info("restoring frag $key")
-                    when (key) {
-                        argsKeys.tabPositionKey -> tabPosition = savedInstanceState!!.getInt(key, 0)
-                    }
-                }
+        savedInstanceState?.keySet()?.forEach {
+            when (it) {
+                argsKeys.tabPositionKey -> tabPosition = savedInstanceState.getInt(it, 0)
+                else -> {}
+            }
+        }
 
         activityComp = getActivityComponent()
         activityComp.inject(this)
@@ -154,7 +151,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
     override fun onDestroy() {
 //        info("start destroy")
         viewModel.onDestroy()
-//        info("end destroy")
+        info("end destroy")
         super.onDestroy()
     }
 }
