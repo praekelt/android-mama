@@ -17,6 +17,10 @@ import org.jetbrains.anko.DimensionsKt;
 
 import java.util.Iterator;
 
+import rx.Observable;
+import rx.schedulers.Schedulers;
+import rx.android.schedulers.AndroidSchedulers;
+
 import kotlin.Sequence;
 import kotlin.text.MatchResult;
 import kotlin.text.Regex;
@@ -33,37 +37,47 @@ import za.foundation.praekelt.mama.util.SharedPrefsUtil;
 public class BindingUtils {
     @BindingAdapter({"bind:viewPager", "bind:fm", "bind:category_items"})
     public static void setCategoryViewPager(TabLayout tl, ViewPager vp, FragmentManager fm, ObservableArrayList<Category> items) {
-        if (vp.getAdapter() == null) {
-            System.out.println("no vp adapter present");
-            vp.setAdapter(new CategoryPageAdapter(fm,
-                    SharedPrefsUtil.INSTANCE.getLocale(tl.getContext()), OrderBy.POSITION, items));
-        } else {
-            System.out.println("refreshing vp adapter");
-            ((CategoryPageAdapter) vp.getAdapter()).setCategories(items);
-        }
+        Observable.just(SharedPrefsUtil.INSTANCE)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .map(prefs -> prefs.getLocale(tl.getContext()))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(locale -> {
+                    if (vp.getAdapter() == null) {
+                        System.out.println("no vp adapter present => items = " + items.size());
+                        vp.setAdapter(new CategoryPageAdapter(fm, locale, OrderBy.POSITION, items));
+                    } else {
+                        System.out.println("refreshing vp adapter => items = " + items.size());
+                        ((CategoryPageAdapter) vp.getAdapter()).setCategories(items);
+                    }
 
-        tl.setupWithViewPager(vp);
+                    tl.setupWithViewPager(vp);
+            });
     }
 
+    /*TODO
+    sort this out the 2 are called back to back
+     */
     @BindingAdapter({"bind:pages"})
     public static void setPages(RecyclerView rv, ObservableArrayList<Page> pages) {
         if (rv.getAdapter() == null) {
-            System.out.println("no rv adapter present");
+            System.out.println("no rv adapter present  => pages  = " + pages.size());
             rv.setAdapter(new CategoryListAdapter(OrderBy.POSITION, pages));
         } else {
-            System.out.println("refreshing vp adapter");
+            System.out.println("refreshing rv adapter  => pages  = " + pages.size());
             ((CategoryListAdapter) rv.getAdapter()).setPages(pages);
+            rv.getAdapter().notifyDataSetChanged();
         }
     }
 
     @BindingAdapter({"android:text", "bind:markdown_format"})
     public static void formatMarkdownTextView(TextView view, String text, boolean format) {
-        System.out.println("binding text to text view => "+text.length());
+//        System.out.println("binding text to text view => "+text.length());
         SpannableStringBuilder formattedPage = new SpannableStringBuilder();
         int start;
         Regex listItemRegex = new Regex("^\\d+\\.\\s");
         Regex boldRegex = new Regex("\\*\\*");
-        String [] lines = text.split("\\r\\n");
+        String[] lines = text.split("\\r\\n");
         //TODO Use object pool for spans and results
         StyleSpan styleSpan;
         int count = 0;
@@ -71,25 +85,25 @@ public class BindingUtils {
         int boldStart = -1;
         int boldEnd = -1;
         MatchResult boldMatch;
-        for(String str : lines){
-            if(count == 0 || (str.isEmpty() && count > 0)) {
+        for (String str : lines) {
+            if (count == 0 || (str.isEmpty() && count > 0)) {
                 ++count;
                 continue;
-            }else
+            } else
                 count = -1;
 
             Sequence<kotlin.text.MatchResult> boldMatchResultSequence = boldRegex.matchAll(str, 0);
             Iterator<MatchResult> boldIterator = boldMatchResultSequence.iterator();
-            while(boldIterator.hasNext()){
+            while (boldIterator.hasNext()) {
                 boldMatch = boldIterator.next();
-                if(boldStart == -1) {
-                    boldStart = formattedPage.length()+boldMatch.getRange().getStart();
-                    System.out.println("found bold beginning => "+boldMatch.getRange().getStart());
+                if (boldStart == -1) {
+                    boldStart = formattedPage.length() + boldMatch.getRange().getStart();
+//                    System.out.println("found bold beginning => "+boldMatch.getRange().getStart());
                     str = str.replaceFirst("\\*\\*", "");
                     ++changesThisLoop;
-                }else {
-                    boldEnd = formattedPage.length()+boldMatch.getRange().getStart();
-                    System.out.println("found bold beginning =>"+formattedPage.length()+boldMatch.getRange().getStart());
+                } else {
+                    boldEnd = formattedPage.length() + boldMatch.getRange().getStart();
+//                    System.out.println("found bold beginning =>"+formattedPage.length()+boldMatch.getRange().getStart());
                     str = str.replaceFirst("\\*\\*", "");
                     ++changesThisLoop;
                 }
@@ -99,23 +113,23 @@ public class BindingUtils {
             formattedPage.append(str + "\n");
             Sequence<kotlin.text.MatchResult> matchResultSequence = listItemRegex.matchAll(str, 0);
             Iterator<MatchResult> resultIterator = matchResultSequence.iterator();
-            while(resultIterator.hasNext()){
+            while (resultIterator.hasNext()) {
                 MatchResult result = resultIterator.next();
-                System.out.println("found match => " + result.getRange());
+//                System.out.println("found match => " + result.getRange());
                 LeadingMarginSpan.Standard lms = new LeadingMarginSpan.Standard(
                         DimensionsKt.dimen(view.getContext(), R.dimen.detail_page_leading_margin));
                 styleSpan = new StyleSpan(Typeface.BOLD);
                 formattedPage.setSpan(lms, start, start + str.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-                formattedPage.setSpan(styleSpan, start, start+2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                formattedPage.setSpan(styleSpan, start, start + 2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                 formattedPage.append("\n");
             }
 
-            if(boldStart > 0 && boldEnd > 0){
+            if (boldStart > 0 && boldEnd > 0) {
                 styleSpan = new StyleSpan(Typeface.BOLD);
-                if(changesThisLoop == 1)
+                if (changesThisLoop == 1)
                     formattedPage.setSpan(styleSpan, boldStart, boldEnd, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                 else
-                    formattedPage.setSpan(styleSpan, boldStart, boldEnd-2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                    formattedPage.setSpan(styleSpan, boldStart, boldEnd - 2, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                 boldStart = boldEnd = -1;
             }
         }

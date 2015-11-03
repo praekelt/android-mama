@@ -2,12 +2,14 @@ package za.foundation.praekelt.mama.inject.module;
 
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 
 import org.jetbrains.anko.Sdk15ServicesKt;
 
 import dagger.Module;
 import dagger.Provides;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 import za.foundation.praekelt.mama.app.activity.MainActivity;
 import za.foundation.praekelt.mama.app.viewmodel.BaseViewModel;
 import za.foundation.praekelt.mama.app.viewmodel.MainActivityViewModel;
@@ -43,7 +45,9 @@ public class MainActivityModule {
 
     @Provides
     public Observable<Boolean> provideNetworkObservable(){
-        return Observable.just(Sdk15ServicesKt.getConnectivityManager(activity).getActiveNetworkInfo())
+        return Observable.just(Sdk15ServicesKt.getConnectivityManager(activity))
+                .observeOn(Schedulers.io())
+                .map(ConnectivityManager::getActiveNetworkInfo)
                 .map(networkInfo -> (networkInfo != null && networkInfo.isConnected()));
     }
 }

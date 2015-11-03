@@ -58,7 +58,7 @@ class App : Application(), AnkoLogger {
     }
 
     fun getCachedViewModel(id: String): BaseViewModel? {
-        if (viewModels.contains(id)) println("found cached view model") else println("no cached view model")
+        if (viewModels.contains(id)) println("found cached view model for => $id") else println("no cached view model for => $id")
         return viewModels.remove(id)
     }
 }

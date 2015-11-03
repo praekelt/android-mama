@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import org.jetbrains.anko.AnkoLogger
 import za.foundation.praekelt.mama.R
 import za.foundation.praekelt.mama.api.model.Page
 import za.foundation.praekelt.mama.databinding.CategoryListItemBinding
@@ -13,6 +14,7 @@ import za.foundation.praekelt.mama.util.PageNameComparator
 import za.foundation.praekelt.mama.util.PagePositionComparator
 import za.foundation.praekelt.mama.util.otto.PageItemClickedPost
 import java.util.ArrayList
+import org.jetbrains.anko.warn
 
 /**
  * Adapter class for list of stories per category
@@ -20,7 +22,7 @@ import java.util.ArrayList
  */
 class CategoryListAdapter(var orderBy: OrderBy = OrderBy.POSITION,
                           var pages: MutableList<Page> = ArrayList<Page>()) :
-        RecyclerView.Adapter<CategoryListAdapter.ViewHolder>() {
+        RecyclerView.Adapter<CategoryListAdapter.ViewHolder>(), AnkoLogger {
     init {
         pages = sortList(pages)
     }
@@ -41,7 +43,7 @@ class CategoryListAdapter(var orderBy: OrderBy = OrderBy.POSITION,
         holder.binding.setPage(pages[pos])
         holder.binding.getRoot().setOnClickListener{v ->
             (v.getContext().getApplicationContext() as App).bus.post(
-                    PageItemClickedPost(pages[pos].getUuid()))
+                    PageItemClickedPost(pages[pos].uuid))
         }
     }
 
