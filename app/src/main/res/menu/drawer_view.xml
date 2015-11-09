@@ -14,19 +14,26 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_featured_stories"
-            android:title="@string/nav_featured_stories" />
+            android:title="@string/nav_featured_stories"
+            android:icon="@drawable/ic_whatshot_24dp"
+            app:showAsAction="always"/>
         <item
             android:id="@+id/nav_browse_all"
-            android:title="@string/nav_browse_all" />
+            android:title="@string/nav_browse_all"
+            android:icon="@drawable/ic_book_24dp"
+            app:showAsAction="always"/>
 
         <item
             android:id="@+id/nav_bookmarks"
-            android:title="@string/nav_bookmarks" />
+            android:title="@string/nav_bookmarks"
+            android:icon="@drawable/ic_bookmark_outline_24dp"
+            app:showAsAction="always"/>
     </group>
 
 </menu>

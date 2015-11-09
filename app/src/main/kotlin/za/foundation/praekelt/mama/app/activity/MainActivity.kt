@@ -1,8 +1,10 @@
 package za.foundation.praekelt.mama.app.activity
 
+import android.content.res.Configuration
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
@@ -11,11 +13,7 @@ import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.activity_main.drawer_layout
 import kotlinx.android.synthetic.activity_main.nav_view
 import kotlinx.android.synthetic.include_main_activity_view_pager.simple_toolbar
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.singleTop
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.info
+import org.jetbrains.anko.*
 import rx.Observable
 import za.foundation.praekelt.mama.R
 import za.foundation.praekelt.mama.app.App
@@ -51,6 +49,8 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
     lateinit var networkObs: Observable<Boolean>
         @Inject set
 
+    lateinit var actionbarDrawerToggle: ActionBarDrawerToggle
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding: ActivityMainBinding = DataBindingUtil.setContentView(this,
@@ -58,16 +58,14 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
 
         setSupportActionBar(this.simple_toolbar)
 
-        with(supportActionBar) {
-            setHomeAsUpIndicator(R.drawable.abc_ic_ab_back_mtrl_am_alpha)
-            setDisplayHomeAsUpEnabled(true)
-        }
-
-        this.nav_view.setNavigationItemSelectedListener {
-            menuItem ->
-            menuItem.setChecked(true)
-            this.drawer_layout.closeDrawers()
-            return@setNavigationItemSelectedListener true
+        with(this.nav_view){
+            setCheckedItem(R.id.nav_featured_stories)
+            setNavigationItemSelectedListener {
+                menuItem ->
+                menuItem.setChecked(true)
+                drawer_layout.closeDrawers()
+                return@setNavigationItemSelectedListener true
+            }
         }
 
         savedInstanceState?.keySet()?.forEach {
@@ -76,6 +74,13 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
                 else -> {}
             }
         }
+
+        //Setup hamburger icon on navigation view
+        actionbarDrawerToggle = ActionBarDrawerToggle(
+                this, this.drawer_layout, this.simple_toolbar,
+                R.string.nav_open_desc, R.string.nav_closed_desc)
+        this.drawer_layout.setDrawerListener(actionbarDrawerToggle)
+        actionbarDrawerToggle.syncState()
 
         activityComp.inject(this)
         viewModel.onAttachActivity(this)
@@ -121,6 +126,11 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        actionbarDrawerToggle.onConfigurationChanged(newConfig)
     }
 
     private fun appComp(): ApplicationComponent {
