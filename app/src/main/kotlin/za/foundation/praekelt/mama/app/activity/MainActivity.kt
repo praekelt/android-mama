@@ -148,9 +148,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     override fun onDestroy() {
-//        info("start destroy")
         viewModel.onDestroy()
-        info("end destroy")
         super.onDestroy()
     }
 }
