@@ -56,18 +56,6 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         val binding: ActivityMainBinding = DataBindingUtil.setContentView(this,
                 R.layout.activity_main)
 
-        setSupportActionBar(this.simple_toolbar)
-
-        with(this.nav_view){
-            setCheckedItem(R.id.nav_featured_stories)
-            setNavigationItemSelectedListener {
-                menuItem ->
-                menuItem.setChecked(true)
-                drawer_layout.closeDrawers()
-                return@setNavigationItemSelectedListener true
-            }
-        }
-
         savedInstanceState?.keySet()?.forEach {
             when (it) {
                 argsKeys.tabPositionKey -> tabPosition = savedInstanceState.getInt(it, 0)
@@ -75,12 +63,9 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
             }
         }
 
-        //Setup hamburger icon on navigation view
-        actionbarDrawerToggle = ActionBarDrawerToggle(
-                this, this.drawer_layout, this.simple_toolbar,
-                R.string.nav_open_desc, R.string.nav_closed_desc)
-        this.drawer_layout.setDrawerListener(actionbarDrawerToggle)
-        actionbarDrawerToggle.syncState()
+        setSupportActionBar(this.simple_toolbar)
+        actionbarDrawerToggle = setupNavigationDrawer(this.drawer_layout, this.nav_view,
+                R.id.nav_featured_stories, this.simple_toolbar)
 
         activityComp.inject(this)
         viewModel.onAttachActivity(this)
