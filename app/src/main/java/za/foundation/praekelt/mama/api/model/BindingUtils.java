@@ -49,6 +49,7 @@ public class BindingUtils {
                     } else {
                         System.out.println("refreshing vp adapter => items = " + items.size());
                         ((CategoryPageAdapter) vp.getAdapter()).setCategories(items);
+                        vp.getAdapter().notifyDataSetChanged();
                     }
 
                     tl.setupWithViewPager(vp);

@@ -50,6 +50,7 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
     init {
         app = mainActivity.activityComp.app()
         viewModelComp.inject(this);
+        repoObs.subscribe ( { repo -> info("got repo"); refreshCategories() }, { err -> print("error getting repo")})
     }
 
     override fun onAttachActivity(activity: MainActivity) {
