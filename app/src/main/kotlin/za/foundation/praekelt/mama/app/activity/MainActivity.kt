@@ -79,6 +79,8 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
         networkObs.filter { !it }
                 .subscribe { noInternetSnackBar() }
 
+        this.nav_view.setCheckedItem(R.id.nav_featured_stories)
+
         activityComp.bus().register(this)
 //        info("end resuming")
     }

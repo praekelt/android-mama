@@ -7,7 +7,11 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import org.jetbrains.anko.clearTask
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.singleTop
 import org.jetbrains.anko.support.v4.drawerLayout
+import org.jetbrains.anko.toast
 import za.foundation.praekelt.mama.R
 
 /**
@@ -18,12 +22,16 @@ private fun AppCompatActivity.setupBaseNavigationDrawer(currentItem: Int, drawer
     with(navView) {
         setCheckedItem(currentItem)
         setNavigationItemSelectedListener { menuItem ->
-            if (menuItem.itemId == currentItem) {
-                drawerLayout.closeDrawers()
-                return@setNavigationItemSelectedListener false
+            when(menuItem.itemId){
+                currentItem -> {
+                    drawerLayout.closeDrawers()
+                    return@setNavigationItemSelectedListener false
+                }
+                R.id.nav_featured_stories -> startActivity(intentFor<MainActivity>().clearTask())
+                R.id.nav_browse_all -> startActivity(intentFor<BrowseAllActivity>().singleTop())
+                R.id.nav_bookmarks -> toast("Under construction")
             }
 
-            menuItem.setChecked(true)
             drawerLayout.closeDrawers()
             return@setNavigationItemSelectedListener true
         }
