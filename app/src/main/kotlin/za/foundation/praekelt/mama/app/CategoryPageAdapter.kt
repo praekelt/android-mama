@@ -20,15 +20,11 @@ import java.util.ArrayList
  */
 class CategoryPageAdapter(val fm: FragmentManager, val locale: String,
                           var orderBy: OrderBy = OrderBy.POSITION,
-                          mCategories: MutableList<Category> = ArrayList<Category>()) :
+                          mCategories: List<Category> = emptyList()) :
         FragmentStatePagerAdapter(fm) {
-    var categories: MutableList<Category> = mCategories
+    var categories: List<Category> = sortList(mCategories)
         set(cats){
-            field = when (orderBy) {
-                OrderBy.POSITION -> cats.sortedBy { it.position } as MutableList<Category>
-                OrderBy.NAME -> cats.sortedBy { it.title } as MutableList<Category>
-                else -> cats.sortedBy { it.position } as MutableList<Category>
-            }
+            field = sortList(cats)
         }
 
     override fun getCount(): Int {
@@ -50,11 +46,11 @@ class CategoryPageAdapter(val fm: FragmentManager, val locale: String,
             null
     }
 
-    fun sortList(catList: MutableList<Category>): MutableList<Category> {
-        when (orderBy) {
-            OrderBy.POSITION -> return catList.sortedWith(CategoryPositionComparator()) as MutableList
-            OrderBy.NAME -> return catList.sortedWith(CategoryNameComparator()) as MutableList
-            else -> return catList
+    fun sortList(list: List<Category>): List<Category>{
+        return when (orderBy) {
+            OrderBy.POSITION -> list.sortedBy { it.position }
+            OrderBy.NAME -> list.sortedBy { it.title }
+            else -> list.sortedBy { it.position }
         }
     }
 
