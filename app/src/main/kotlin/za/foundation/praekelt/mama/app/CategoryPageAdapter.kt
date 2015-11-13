@@ -2,17 +2,13 @@ package za.foundation.praekelt.mama.app
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.PagerAdapter
 import za.foundation.praekelt.mama.R
 import za.foundation.praekelt.mama.api.model.Category
 import za.foundation.praekelt.mama.app.fragment.CategoryListFragment
 import za.foundation.praekelt.mama.app.fragment.EmptyListFragment
-import za.foundation.praekelt.mama.util.CategoryNameComparator
-import za.foundation.praekelt.mama.util.CategoryPositionComparator
 import za.foundation.praekelt.mama.util.OrderBy
-import java.util.ArrayList
 
 /**
  * Adapter for category fragment view pager

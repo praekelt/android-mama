@@ -1,7 +1,6 @@
 package za.foundation.praekelt.mama.app
 
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,22 +9,19 @@ import za.foundation.praekelt.mama.R
 import za.foundation.praekelt.mama.api.model.Page
 import za.foundation.praekelt.mama.databinding.CategoryListItemBinding
 import za.foundation.praekelt.mama.util.OrderBy
-import za.foundation.praekelt.mama.util.PageNameComparator
-import za.foundation.praekelt.mama.util.PagePositionComparator
 import za.foundation.praekelt.mama.util.otto.PageItemClickedPost
-import java.util.ArrayList
-import org.jetbrains.anko.warn
 
 /**
  * Adapter class for list of stories per category
  * @see za.foundation.praekelt.mama.app.fragment.CategoryListFragment
  */
 class CategoryListAdapter(var orderBy: OrderBy = OrderBy.POSITION,
-                          var pages: MutableList<Page> = ArrayList<Page>()) :
+                          var mPages: List<Page> = emptyList()) :
         RecyclerView.Adapter<CategoryListAdapter.ViewHolder>(), AnkoLogger {
-    init {
-        pages = sortList(pages)
-    }
+    var pages: List<Page> = sortList(mPages)
+        set(pgs) {
+            field = sortList(pgs);
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup?,
                                     viewType: Int): CategoryListAdapter.ViewHolder? {
@@ -35,6 +31,7 @@ class CategoryListAdapter(var orderBy: OrderBy = OrderBy.POSITION,
     }
 
     override fun getItemCount(): Int {
+        //TODO empty list state
         return pages.size
     }
 
@@ -51,12 +48,10 @@ class CategoryListAdapter(var orderBy: OrderBy = OrderBy.POSITION,
         val binding: CategoryListItemBinding = CategoryListItemBinding.bind(itemView)
     }
 
-    fun sortList(pageList: MutableList<Page>): MutableList<Page> {
-        Log.i("CLA", "sorting by ${orderBy}")
+    fun sortList(pageList: List<Page>): List<Page> {
         when (orderBy) {
-            OrderBy.POSITION -> return pageList.sortedWith(PagePositionComparator()) as MutableList
-            OrderBy.NAME -> return pageList.sortedWith(PageNameComparator()) as MutableList
-            else -> return pageList
+            OrderBy.POSITION -> return pageList.sortedBy { it.position }
+            OrderBy.NAME -> return pageList.sortedBy { it.title }
         }
     }
 }

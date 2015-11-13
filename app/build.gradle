@@ -45,6 +45,10 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
 
+    lintOptions {
+        abortOnError false
+    }
+
     defaultConfig {
         applicationId "za.foundation.praekelt.mama"
         minSdkVersion 17
