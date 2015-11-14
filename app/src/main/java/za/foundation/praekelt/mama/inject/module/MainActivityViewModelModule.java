@@ -6,8 +6,6 @@ import android.util.Log;
 
 import org.jetbrains.anko.Sdk15ServicesKt;
 
-import java.util.concurrent.TimeUnit;
-
 import dagger.Module;
 import dagger.Provides;
 import rx.Observable;
@@ -94,8 +92,6 @@ public class MainActivityViewModelModule {
                 .doOnNext(repo -> SharedPrefsUtil.INSTANCE
                         .saveCommitToSharedPrefs(ctx, repo.getCommit()))
                 .doOnNext(repo -> Log.i(TAG, "SP saved"))
-                .doOnNext(repo -> Observable.interval(500, TimeUnit.MILLISECONDS)
-                        .toBlocking().first())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
