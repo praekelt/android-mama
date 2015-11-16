@@ -15,11 +15,15 @@ import java.util.*
  */
 class BrowseAllActivityViewModel(act: BrowseAllActivity):
         BaseActivityViewModel<BrowseAllActivity>(act), AnkoLogger{
-    val allCategories: Category = Category().apply { title = "All Categories` " }
+    val allCategories: Category = Category().apply { title = "All Categories" }
     lateinit var categories: List<Category>
 
     override fun onAttachActivity(activity: BrowseAllActivity) {
         super.onAttachActivity(activity)
+        refreshCategories()
+    }
+
+    fun refreshCategories(){
         Select().from(Category::class.java)
                 .where(Condition.column(Category_Table.LOCALEID)
                         .`is`(SharedPrefsUtil.getLocale(this.act!!.get())))

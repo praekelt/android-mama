@@ -35,8 +35,8 @@
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
                 <Spinner
                     android:id="@+id/toolbar_category_spinner"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     style="@style/ToolbarSpinnerLight"/>
             </android.support.v7.widget.Toolbar>
 
