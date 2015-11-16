@@ -1,4 +1,4 @@
-package za.foundation.praekelt.mama.app
+package za.foundation.praekelt.mama.app.adapter
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager

@@ -25,8 +25,8 @@ import kotlin.Sequence;
 import kotlin.text.MatchResult;
 import kotlin.text.Regex;
 import za.foundation.praekelt.mama.R;
-import za.foundation.praekelt.mama.app.CategoryListAdapter;
-import za.foundation.praekelt.mama.app.CategoryPageAdapter;
+import za.foundation.praekelt.mama.app.adapter.CategoryListAdapter;
+import za.foundation.praekelt.mama.app.adapter.CategoryPageAdapter;
 import za.foundation.praekelt.mama.util.OrderBy;
 import za.foundation.praekelt.mama.util.SharedPrefsUtil;
 
