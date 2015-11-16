@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -29,6 +29,14 @@
         <item name="android:paddingBottom">@dimen/collapseTitlePaddingVertical</item>
         <item name="android:layout_gravity">bottom</item>
         <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="ToolbarSpinnerLight" parent="Widget.AppCompat.Light.Spinner.DropDown.ActionBar">
+        <!--<item name="android:background">?android:selectableItemBackground</item>-->
+        <!--<item name="android:dropDownSelector">?android:selectableItemBackground</item>-->
+        <item name="android:popupBackground">@color/colorAccent</item>
+        <item name="android:divider">@null</item>
+        <item name="android:overlapAnchor" tools:targetApi="lollipop">true</item>
     </style>
 
 </resources>
