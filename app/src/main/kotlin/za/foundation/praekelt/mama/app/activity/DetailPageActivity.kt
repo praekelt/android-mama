@@ -8,9 +8,11 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.util.TypedValue
-import kotlinx.android.synthetic.activity_detail_page.appbar
-import kotlinx.android.synthetic.activity_detail_page.tv_collapsing_title
-import org.jetbrains.anko.*
+import kotlinx.android.synthetic.activity_detail_page.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.dimen
+import org.jetbrains.anko.info
+import org.jetbrains.anko.maxLines
 import za.foundation.praekelt.mama.R
 import za.foundation.praekelt.mama.app.viewmodel.DetailPageActivityViewModel
 import za.foundation.praekelt.mama.databinding.ActivityDetailPageBinding
@@ -18,7 +20,6 @@ import za.foundation.praekelt.mama.inject.component.DaggerDetailPageActivityComp
 import za.foundation.praekelt.mama.inject.component.DetailPageActivityComponent
 import za.foundation.praekelt.mama.inject.module.DetailPageActivityModule
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 /**
  * Created by eduardokolomajr on 2015/09/14.
@@ -55,7 +56,7 @@ public class DetailPageActivity() : AppCompatActivity(), Animator.AnimatorListen
         activityComp.inject(this)
         val binding: ActivityDetailPageBinding = DataBindingUtil.setContentView(this,
                 R.layout.activity_detail_page)
-        binding.setPage(viewModel)
+        binding.page = viewModel
         binding.executePendingBindings()
 
         expandedPaddingStartSize = dimen(R.dimen.collapseTitlePaddingStartExpanded)

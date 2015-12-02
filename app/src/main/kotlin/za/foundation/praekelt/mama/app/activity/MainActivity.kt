@@ -6,14 +6,15 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import com.squareup.otto.Subscribe
-import kotlinx.android.synthetic.activity_main.drawer_layout
-import kotlinx.android.synthetic.activity_main.nav_view
-import kotlinx.android.synthetic.include_main_activity_view_pager.simple_toolbar
-import org.jetbrains.anko.*
+import kotlinx.android.synthetic.activity_main.*
+import kotlinx.android.synthetic.include_main_activity_view_pager.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.singleTop
+import org.jetbrains.anko.toast
 import rx.Observable
 import za.foundation.praekelt.mama.R
 import za.foundation.praekelt.mama.app.App
@@ -25,7 +26,6 @@ import za.foundation.praekelt.mama.inject.component.MainActivityComponent
 import za.foundation.praekelt.mama.inject.module.MainActivityModule
 import za.foundation.praekelt.mama.util.otto.PageItemClickedPost
 import javax.inject.Inject
-import kotlin.properties.Delegates
 import za.foundation.praekelt.mama.util.Constants as _C
 
 public class MainActivity : AppCompatActivity(), AnkoLogger {
@@ -69,7 +69,7 @@ public class MainActivity : AppCompatActivity(), AnkoLogger {
 
         activityComp.inject(this)
         viewModel.onAttachActivity(this)
-        binding.setMainActVM(viewModel)
+        binding.mainActVM = viewModel
     }
 
     override fun onResume() {
