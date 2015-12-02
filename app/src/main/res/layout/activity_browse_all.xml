@@ -4,8 +4,8 @@
         xmlns:bind="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
-            name="mainActVM"
-            type="za.foundation.praekelt.mama.app.viewmodel.MainActivityViewModel"/>
+            name="browseAllActVM"
+            type="za.foundation.praekelt.mama.app.viewmodel.BrowseAllActivityViewModel"/>
     </data>
 
     <android.support.v4.widget.DrawerLayout
@@ -37,15 +37,16 @@
                     android:id="@+id/toolbar_category_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    style="@style/ToolbarSpinnerLight"/>
+                    style="@style/ToolbarSpinnerLight"
+                    bind:items="@{browseAllActVM.categories}"/>
             </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.AppBarLayout>
             <!-- Start coordinator layout content-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            </LinearLayout>
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent">-->
+            <!--</LinearLayout>-->
 
             <!-- End coordinator layout content-->
         </android.support.design.widget.CoordinatorLayout>

@@ -2,6 +2,7 @@ package za.foundation.praekelt.mama.api.model;
 
 import android.databinding.BindingAdapter;
 import android.databinding.ObservableArrayList;
+import android.databinding.ObservableList;
 import android.graphics.Typeface;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
@@ -11,20 +12,21 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.StyleSpan;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.jetbrains.anko.DimensionsKt;
 
 import java.util.Iterator;
 
-import rx.Observable;
-import rx.schedulers.Schedulers;
-import rx.android.schedulers.AndroidSchedulers;
-
 import kotlin.Sequence;
 import kotlin.text.MatchResult;
 import kotlin.text.Regex;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import za.foundation.praekelt.mama.R;
+import za.foundation.praekelt.mama.app.adapter.ToolBarSpinnerCategoryAdapter;
 import za.foundation.praekelt.mama.app.adapter.CategoryListAdapter;
 import za.foundation.praekelt.mama.app.adapter.CategoryPageAdapter;
 import za.foundation.praekelt.mama.util.OrderBy;
@@ -135,5 +137,11 @@ public class BindingUtils {
             }
         }
         view.setText(formattedPage, TextView.BufferType.SPANNABLE);
+    }
+
+    @BindingAdapter({"bind:items"})
+    public static void setSpinnerItems(Spinner spinner, ObservableList<Category> items) {
+        System.out.println("setting spinner items => " + items.size());
+        spinner.setAdapter(new ToolBarSpinnerCategoryAdapter(items));
     }
 }
