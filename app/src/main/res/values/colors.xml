@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="palePink">#e47c80</color>
+    <color name="white">#ffffff</color>
+
     <color name="colorPrimary">#d1582a</color>
     <color name="colorPrimaryDark">#b9262c</color>
     <color name="colorAccent">#efc031</color>
 
-    <color name="colorSubtitle">#e47c80</color>
+    <color name="colorSubtitle">@color/palePink</color>
+    <color name="divider">@color/palePink</color>
 </resources>

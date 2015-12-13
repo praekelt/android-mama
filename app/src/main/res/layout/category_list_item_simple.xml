@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:cardview="http://schemas.android.com/apk/res-auto"
         xmlns:bind="http://schemas.android.com/apk/res-auto">
-
     <data>
-
-        <import type="android.view.View"/>
-
         <variable
             name="page"
             type="za.foundation.praekelt.mama.api.model.Page"/>
     </data>
 
-    <android.support.v7.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        cardview:cardCornerRadius="@dimen/cardview_default_radius"
-        cardview:cardPreventCornerOverlap="true"
-        cardview:cardUseCompatPadding="true">
+        android:orientation="vertical"
+        android:paddingStart="@dimen/category_list_item_padding"
+        android:paddingEnd="@dimen/category_list_item_padding"
+        android:background="@drawable/category_list_item_ripple">
 
         <include
             layout="@layout/include_category_list_item"
             bind:page="@{page}"/>
-
-    </android.support.v7.widget.CardView>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_height"
+            android:background="@color/divider"/>
+    </LinearLayout>
 </layout>
