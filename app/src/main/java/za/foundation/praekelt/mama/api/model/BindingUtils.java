@@ -26,9 +26,9 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import za.foundation.praekelt.mama.R;
-import za.foundation.praekelt.mama.app.adapter.ToolBarSpinnerCategoryAdapter;
 import za.foundation.praekelt.mama.app.adapter.CategoryListAdapter;
 import za.foundation.praekelt.mama.app.adapter.CategoryPageAdapter;
+import za.foundation.praekelt.mama.app.adapter.ToolBarSpinnerCategoryAdapter;
 import za.foundation.praekelt.mama.util.OrderBy;
 import za.foundation.praekelt.mama.util.SharedPrefsUtil;
 
@@ -143,5 +143,18 @@ public class BindingUtils {
     public static void setSpinnerItems(Spinner spinner, ObservableList<Category> items) {
         System.out.println("setting spinner items => " + items.size());
         spinner.setAdapter(new ToolBarSpinnerCategoryAdapter(items));
+    }
+
+    @BindingAdapter({"bind:items"})
+    public static void setBrowseAllItems(RecyclerView rv, ObservableList<Page> pages) {
+        System.out.println("setting browse all item => " + pages.size());
+        if (rv.getAdapter() == null) {
+            System.out.println("no rv adapter present  => pages  = " + pages.size());
+            rv.setAdapter(new CategoryListAdapter(OrderBy.POSITION, pages));
+
+        } else {
+            System.out.println("refreshing rv adapter  => pages  = " + pages.size());
+            ((CategoryListAdapter) rv.getAdapter()).setPages(pages);
+        }
     }
 }

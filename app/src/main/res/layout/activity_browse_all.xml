@@ -43,10 +43,13 @@
 
         </android.support.design.widget.AppBarLayout>
             <!-- Start coordinator layout content-->
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent">-->
-            <!--</LinearLayout>-->
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layoutManager="@{browseAllActVM.layoutManager}"
+                bind:items="@{browseAllActVM.pages}">
+            </android.support.v7.widget.RecyclerView>
 
             <!-- End coordinator layout content-->
         </android.support.design.widget.CoordinatorLayout>

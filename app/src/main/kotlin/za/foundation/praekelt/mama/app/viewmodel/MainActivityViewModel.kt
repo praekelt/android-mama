@@ -6,14 +6,11 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.view.ViewPager
 import com.raizlabs.android.dbflow.sql.builder.Condition
 import com.raizlabs.android.dbflow.sql.language.Select
-import kotlinx.android.synthetic.include_main_activity_view_pager.viewpager
+import kotlinx.android.synthetic.include_main_activity_view_pager.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.async
 import org.jetbrains.anko.info
-import org.jetbrains.anko.warn
 import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 import za.foundation.praekelt.mama.BR
 import za.foundation.praekelt.mama.api.model.Category
 import za.foundation.praekelt.mama.api.model.Category_Table
@@ -24,9 +21,7 @@ import za.foundation.praekelt.mama.inject.component.DaggerMainActivityViewModelC
 import za.foundation.praekelt.mama.inject.component.MainActivityViewModelComponent
 import za.foundation.praekelt.mama.inject.module.MainActivityViewModelModule
 import za.foundation.praekelt.mama.util.otto.ViewModelPost
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.properties.Delegates
 import za.foundation.praekelt.mama.util.Constants as _C
 
 /**
@@ -43,8 +38,8 @@ public class MainActivityViewModel(mainActivity: MainActivity) :
     @Bindable var vp: ViewPager? = null
     @Bindable var categories: ObservableArrayList<Category> = ObservableArrayList()
 
-    companion object{
-        const val TAG: String = "MainActivityViewModel"
+    companion object {
+        @JvmField val TAG: String = MainActivityViewModel::class.javaClass.simpleName
     }
 
     init {

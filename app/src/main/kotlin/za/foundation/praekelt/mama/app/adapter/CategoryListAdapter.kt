@@ -20,9 +20,12 @@ import za.foundation.praekelt.mama.util.otto.PageItemClickedPost
 class CategoryListAdapter(var orderBy: OrderBy = OrderBy.POSITION,
                           var mPages: List<Page> = emptyList()) :
         RecyclerView.Adapter<CategoryListAdapter.ViewHolder>(), AnkoLogger {
+
     var pages: List<Page> = sortList(mPages)
         set(pgs) {
-            field = sortList(pgs);
+            val oldSize = field.size
+            field = sortList(pgs)
+            notifyRecyclerView(oldSize, field.size)
         }
 
     override fun onCreateViewHolder(parent: ViewGroup?,
@@ -37,13 +40,16 @@ class CategoryListAdapter(var orderBy: OrderBy = OrderBy.POSITION,
         return pages.size
     }
 
+
     override fun onBindViewHolder(holder: ViewHolder?, pos: Int) {
         holder!!
-        holder.binding.setPage(pages[pos])
+        holder.binding.page = pages[pos]
+        holder.binding.root.visibility = View.VISIBLE
         holder.binding.root.onClick { v ->
-            (v!!.getContext().getApplicationContext() as App).bus.post(
+            (v!!.context.applicationContext as App).bus.post(
                     PageItemClickedPost(pages[pos].uuid))
         }
+        holder.binding.executePendingBindings()
     }
 
     inner class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
@@ -54,6 +60,21 @@ class CategoryListAdapter(var orderBy: OrderBy = OrderBy.POSITION,
         when (orderBy) {
             OrderBy.POSITION -> return pageList.sortedBy { it.position }
             OrderBy.NAME -> return pageList.sortedBy { it.title }
+        }
+    }
+
+    private fun notifyRecyclerView(oldSize: Int, newSize: Int) {
+        if(newSize < oldSize){
+            println("notifying shrinkage => $oldSize <=> $newSize; diff = ${oldSize-newSize}")
+            notifyItemRangeRemoved(newSize, oldSize-newSize)
+            notifyItemRangeChanged(0, newSize)
+        }
+        else if(newSize > oldSize){
+            println("notifying expansion => $oldSize <=> $newSize; diff = ${newSize-oldSize}")
+            notifyItemRangeChanged(0, oldSize)
+            notifyItemRangeInserted(oldSize, newSize-oldSize)
+        }else if(newSize == oldSize){
+            notifyItemRangeChanged(0, oldSize)
         }
     }
 }
