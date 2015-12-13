@@ -3,6 +3,7 @@ package za.foundation.praekelt.mama.app.activity
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.activity_browse_all.*
 import org.jetbrains.anko.*
 import za.foundation.praekelt.mama.R
@@ -38,6 +39,16 @@ class BrowseAllActivity: AppCompatActivity(), AnkoLogger {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        activityComponent.bus().register(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        activityComponent.bus().unregister(this)
+    }
+
     override fun onDestroy() {
         viewModel.onDestroy()
         super.onDestroy()
@@ -50,5 +61,12 @@ class BrowseAllActivity: AppCompatActivity(), AnkoLogger {
                 .applicationComponent(appComponent())
                 .browseAllActivityModule(BrowseAllActivityModule(this))
                 .build()
+    }
+
+    @Subscribe
+    fun pageClickedEvent(post: PageItemClickedPost){
+        toast("item clicked => ${post.pageUuid}")
+        startActivity(intentFor<DetailPageActivity>(
+                DetailPageActivity.argsKeys.uuidKey to post.pageUuid).singleTop())
     }
 }
